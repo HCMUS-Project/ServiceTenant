@@ -1,0 +1,10 @@
+{
+    "$schema": "https://json.schemastore.org/nest-cli",
+    "collection": "@nestjs/schematics",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "sourceRoot": "src",
+    "compilerOptions": {
+        "deleteOutDir": true
+    }
+    
+}
