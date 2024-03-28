@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource commerce_db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URI")
+}
+
+model Product {
+  id          String @id @default(uuid())
+  name        String
+  price       Float
+  quantity    Int
+  tenant_id   String
+  description String
+  views       Int
+  rating      Float
+  category_id String // Thêm trường category_id vào mô hình Product
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  category Category @relation(fields: [category_id], references: [id])
+  Review   Review[]
+}
+
+model Category {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  products Product[]
+  Voucher  Voucher[]
+}
+
+model Cart {
+  id               String   @id @default(uuid())
+  user_id          String
+  product_ids      String[]
+  product_quanties Int[]
+  total_price      Float
+  status           String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model Order {
+  id               String   @id @default(uuid())
+  user_id          String
+  product_ids      String[]
+  product_quanties Int[]
+  total_price      Float
+  status           String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model Voucher {
+  id               String   @id @default(uuid())
+  category_id      String
+  voucher_name     String
+  voucher_code     String
+  max_discount     Float
+  min_app_value    Float
+  discount_percent Float
+  expire_at        DateTime
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  category Category @relation(fields: [category_id], references: [id])
+}
+
+model Review {
+  id         String @id @default(uuid())
+  product_id String
+  user_id    String
+  rating     Float
+  review     String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  product Product @relation(fields: [product_id], references: [id])
+}

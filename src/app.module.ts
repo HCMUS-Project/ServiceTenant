@@ -13,6 +13,7 @@ import { ResponseInterceptor } from './core/responses/interceptors/response.inte
 import { DatabaseModule } from './core/database/modules/database.module';
 import { CacheModule } from './core/cache/modules/cache.module';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { PostgresModule } from './core/database/modules/postgre.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
         ConfigsModule,
         ContextModule,
         DatabaseModule,
+        PostgresModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],
