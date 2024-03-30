@@ -15,7 +15,7 @@ datasource commerce_db {
 
 model Product {
   id          String @id @default(uuid())
-  name        String
+  name        String @unique
   price       Float
   quantity    Int
   tenant_id   String
@@ -34,7 +34,7 @@ model Product {
 
 model Category {
   id          String @id @default(uuid())
-  name        String
+  name        String @unique
   description String
 
   created_at DateTime  @default(now())
