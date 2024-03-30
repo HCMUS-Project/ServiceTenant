@@ -13,7 +13,12 @@ import { ResponseInterceptor } from './core/responses/interceptors/response.inte
 import { DatabaseModule } from './core/database/modules/database.module';
 import { CacheModule } from './core/cache/modules/cache.module';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { PostgresModule } from './core/database/modules/postgre.module';
+import { Logger } from 'winston';
+import { LoggerModule } from './core/logger/modules/logger.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { Product } from './feature/ecommerce/product/entities/product.entity';
+import { ProductModule } from './feature/ecommerce/product/product.module';
+import { CategoryModule } from './feature/ecommerce/category/category.module';
 
 
 @Module({
@@ -22,7 +27,10 @@ import { PostgresModule } from './core/database/modules/postgre.module';
         ConfigsModule,
         ContextModule,
         DatabaseModule,
-        PostgresModule,
+        LoggerModule,
+        PrismaModule,
+        ProductModule,
+        CategoryModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],
