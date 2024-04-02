@@ -28,18 +28,40 @@ export class CategoryService {
   }
 
   findAll() {
-    return `This action returns all category`;
+    return this.prismaService.category.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  findOne(id: string) {
+    return this.prismaService.category.findUnique({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    try {
+      return this.prismaService.category.update({
+        where: { id: id },
+        data: {
+          name: updateCategoryDto.name,
+          description: updateCategoryDto.description,
+        },
+      });
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new Error('Category name exists. Please choose another name.');
+      }
+
+      throw new Error('Can not update category. Please try again.');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  remove(id: string) {
+    return this.prismaService.category.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 }

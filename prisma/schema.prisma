@@ -16,13 +16,14 @@ datasource commerce_db {
 model Product {
   id          String @id @default(uuid())
   name        String @unique
-  price       Float
+  price       Decimal @commerce_db.Decimal(19, 2)
   quantity    Int
   tenant_id   String
   description String
+  image       String
   views       Int
-  rating      Float
-  category_id String // Thêm trường category_id vào mô hình Product
+  rating      Decimal @commerce_db.Decimal(19, 1)
+  category_id String
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
@@ -50,7 +51,7 @@ model Cart {
   user_id          String
   product_ids      String[]
   product_quanties Int[]
-  total_price      Float
+  total_price      Decimal @commerce_db.Decimal(19, 2)
   status           String
 
   created_at DateTime  @default(now())
@@ -63,7 +64,7 @@ model Order {
   user_id          String
   product_ids      String[]
   product_quanties Int[]
-  total_price      Float
+  total_price      Decimal @commerce_db.Decimal(19, 2)
   status           String
 
   created_at DateTime  @default(now())
@@ -76,9 +77,9 @@ model Voucher {
   category_id      String
   voucher_name     String
   voucher_code     String
-  max_discount     Float
-  min_app_value    Float
-  discount_percent Float
+  max_discount     Decimal @commerce_db.Decimal(19, 2)
+  min_app_value    Decimal @commerce_db.Decimal(19, 2)
+  discount_percent Decimal @commerce_db.Decimal(19, 2)
   expire_at        DateTime
 
   created_at DateTime  @default(now())
@@ -92,7 +93,7 @@ model Review {
   id         String @id @default(uuid())
   product_id String
   user_id    String
-  rating     Float
+  rating     Decimal @commerce_db.Decimal(19, 1)
   review     String
 
   created_at DateTime  @default(now())

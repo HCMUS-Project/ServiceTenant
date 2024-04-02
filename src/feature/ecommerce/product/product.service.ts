@@ -3,13 +3,17 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductDto } from './dto/product.dto';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private prismaService: PrismaService){}
+  constructor(private prismaService: PrismaService,
+              private supabaseService: SupabaseService
+  ){}
 
   async create(createProductDto: CreateProductDto) {
     try {
+      const imageLink = await this.supabaseService.uploadImageAndGetLink(createProductDto.image);
       const product = await this.prismaService.product.create({
         data: {
           name: createProductDto.name,
@@ -17,22 +21,19 @@ export class ProductService {
           quantity: createProductDto.quantity,
           tenant_id: createProductDto.tenant_id,
           description: createProductDto.description,
+          image: imageLink,
           views: createProductDto.views,
           rating: createProductDto.rating,
           category_id: createProductDto.category_id,
         },
       });
-      console.log(product);
       return product;
     } catch (error) {
-      // Xử lý các lỗi cụ thể nếu cần thiết
       if (error.code === 'P2002') {
-        // Ví dụ: Xử lý lỗi khi trường unique không hợp lệ
         throw new Error('Product name exists. Please choose another name.');
       }
 
-      // Nếu có lỗi khác, bạn có thể đơn giản trả về một thông báo lỗi tổng quát
-      throw new Error('Can not create product. Please try again.');
+      throw new Error(error.message);
     }
   }
 
@@ -56,11 +57,39 @@ export class ProductService {
     }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(id: string, updateProductDto: UpdateProductDto) {
+    try {
+      const updateResult = this.prismaService.product.update({
+        where: {
+          id: id,
+        },
+        data: {
+          name: updateProductDto.name,
+          price: updateProductDto.price,
+          quantity: updateProductDto.quantity,
+          tenant_id: updateProductDto.tenant_id,
+          description: updateProductDto.description,
+          image: updateProductDto.image,
+          views: updateProductDto.views,
+          rating: updateProductDto.rating,
+          category_id: updateProductDto.category_id,
+        },
+      });
+      return updateResult
+    } catch (error) {
+      throw new Error(`Failed to update product, ${error.message}`)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(id: string) {
+    try {
+      return this.prismaService.product.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      throw new Error('Failed to delete product. Please try again.');
+    }
   }
 }

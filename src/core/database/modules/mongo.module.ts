@@ -22,4 +22,4 @@ import { MongoService } from '../services/mongo.service';
     ],
     exports: ['DATABASE_CONNECTION'],
 })
-export class DatabaseModule {}
+export class MongoModule {}
