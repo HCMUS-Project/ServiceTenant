@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsUUID, IsNumber, IsInt, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsNumber, IsInt, IsOptional, IsArray, ArrayMinSize } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -19,7 +19,9 @@ export class CreateProductDto {
   description: string;
 
   @IsString()
-  image: string;
+  @IsArray()
+  @ArrayMinSize(1)
+  image: string[];
 
   @IsInt()
   views: number;
@@ -27,6 +29,8 @@ export class CreateProductDto {
   @IsNumber()
   rating: number;
 
-  @IsString()
-  category_id: string;
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayMinSize(1)
+  category_id: string[];
 }

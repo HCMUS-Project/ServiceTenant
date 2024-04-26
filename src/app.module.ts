@@ -19,6 +19,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { Product } from './feature/ecommerce/product/entities/product.entity';
 import { ProductModule } from './feature/ecommerce/product/product.module';
 import { CategoryModule } from './feature/ecommerce/category/category.module';
+import { CartModule } from './feature/ecommerce/cart/cart.module';
 
 
 @Module({
@@ -31,6 +32,7 @@ import { CategoryModule } from './feature/ecommerce/category/category.module';
         PrismaModule,
         ProductModule,
         CategoryModule,
+        CartModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

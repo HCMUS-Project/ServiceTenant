@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import {AccessTokenGuard} from 'src/common/guards/token/accessToken.guard';
 
 @Controller('api/product')
 export class ProductController {
@@ -11,7 +12,7 @@ export class ProductController {
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
-
+  
   @Get()
   findAll() {
     return this.productService.findAll();
@@ -30,5 +31,24 @@ export class ProductController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);
+  }
+
+  @Get('search')
+  search(@Query() query: { name?: string; category?: string }) {
+    const { name, category } = query;
+
+    if (name && category) {
+      // Trường hợp cả name và category được chỉ định
+      return this.productService.searchByNameAndCategory(name, category);
+    } else if (name) {
+      // Trường hợp chỉ có name được chỉ định
+      return this.productService.searchByName(name);
+    } else if (category) {
+      // Trường hợp chỉ có category được chỉ định
+      return this.productService.searchByCategory(category);
+    } else {
+      // Trường hợp không có tham số nào được chỉ định
+      return this.productService.findAll();
+    }
   }
 }
