@@ -14,58 +14,77 @@ datasource commerce_db {
 }
 
 model Product {
-  id          String @id @default(uuid())
-  name        String @unique
-  price       Decimal @commerce_db.Decimal(19, 2)
+  id          String    @id @default(uuid())
+  name        String    @unique
+  price       Decimal   @commerce_db.Decimal(19, 2)
   quantity    Int
   tenant_id   String
   description String
-  image       String
+  image       String[]
   views       Int
-  rating      Decimal @commerce_db.Decimal(19, 1)
-  category_id String
+  rating      Decimal   @commerce_db.Decimal(19, 1)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  reviews   Review[]
+  cartItems CartItem[]
 
-  category Category @relation(fields: [category_id], references: [id])
-  Review   Review[]
+  // Define the many-to-many relationship with categories through a junction table
+  categories ProductCategory[]
 }
 
 model Category {
-  id          String @id @default(uuid())
-  name        String @unique
+  id          String    @id @default(uuid())
+  name        String    @unique
   description String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  vouchers        Voucher[]
+  ProductCategory ProductCategory[]
+}
 
-  products Product[]
-  Voucher  Voucher[]
+model ProductCategory {
+  id       String   @id @default(uuid())
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  productId  String
+  categoryId String
+
+  @@unique([productId, categoryId])
 }
 
 model Cart {
-  id               String   @id @default(uuid())
-  user_id          String
-  product_ids      String[]
-  product_quanties Int[]
-  total_price      Decimal @commerce_db.Decimal(19, 2)
-  status           String
+  id          String     @id @default(uuid())
+  user_id     String
+  cartItems   CartItem[]
+  total_price Decimal    @commerce_db.Decimal(19, 2)
+  status      String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  deleted_at  DateTime?
+}
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+model CartItem {
+  cart_id    String
+  product_id String
+  quantity   Int
+  cart       Cart    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([cart_id, product_id])
 }
 
 model Order {
-  id               String   @id @default(uuid())
-  user_id          String
-  product_ids      String[]
-  product_quanties Int[]
-  total_price      Decimal @commerce_db.Decimal(19, 2)
-  status           String
+  id                 String   @id @default(uuid())
+  user_id            String
+  product_ids        String[]
+  product_quantities Int[]
+  total_price        Decimal  @commerce_db.Decimal(19, 2)
+  status             String
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
@@ -74,23 +93,22 @@ model Order {
 
 model Voucher {
   id               String   @id @default(uuid())
-  category_id      String
   voucher_name     String
   voucher_code     String
-  max_discount     Decimal @commerce_db.Decimal(19, 2)
-  min_app_value    Decimal @commerce_db.Decimal(19, 2)
-  discount_percent Decimal @commerce_db.Decimal(19, 2)
+  max_discount     Decimal  @commerce_db.Decimal(19, 2)
+  min_app_value    Decimal  @commerce_db.Decimal(19, 2)
+  discount_percent Decimal  @commerce_db.Decimal(19, 2)
   expire_at        DateTime
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
-
-  category Category @relation(fields: [category_id], references: [id])
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 }
 
 model Review {
-  id         String @id @default(uuid())
+  id         String  @id @default(uuid())
   product_id String
   user_id    String
   rating     Decimal @commerce_db.Decimal(19, 1)

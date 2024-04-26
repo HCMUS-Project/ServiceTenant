@@ -44,8 +44,7 @@ export class CategoryService {
       return this.prismaService.category.update({
         where: { id: id },
         data: {
-          name: updateCategoryDto.name,
-          description: updateCategoryDto.description,
+          ...updateCategoryDto
         },
       });
     } catch (error) {
