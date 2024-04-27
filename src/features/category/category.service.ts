@@ -62,7 +62,7 @@ export class CategoryService {
             });
 
             return {
-                categoriesList: categories.map(category => ({
+                categories: categories.map(category => ({
                     id: category.id,
                     name: category.name,
                     description: category.description,
@@ -106,7 +106,17 @@ export class CategoryService {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
         }
         try {
-            // update category
+            // Find the category first
+            const category = await this.prismaService.category.findUnique({
+                where: { id: dataUpdate.id, domain: user.domain },
+            });
+
+            // If the category does not exist, throw an error
+            if (!category) {
+                throw new GrpcItemNotFoundException('CATEGORY_NOT_FOUND');
+            }
+
+            // If the category exists, perform the update
             const updatedCategory = await this.prismaService.category.update({
                 where: { id: dataUpdate.id, domain: user.domain },
                 data: {
@@ -114,11 +124,6 @@ export class CategoryService {
                     description: dataUpdate.description,
                 },
             });
-
-            // check if category not exists
-            if (!updatedCategory) {
-                throw new GrpcItemNotFoundException('CATEGORY_NOT_FOUND');
-            }
 
             return {
                 id: updatedCategory.id,
@@ -138,6 +143,16 @@ export class CategoryService {
         }
 
         try {
+            // find the category first
+            const category = await this.prismaService.category.findUnique({
+                where: { id: id, domain: user.domain },
+            });
+
+            // if the category does not exist, throw an error
+            if (!category) {
+                throw new GrpcItemNotFoundException('CATEGORY_NOT_FOUND');
+            }
+
             // delete category by id and domain
             const deletedCategory = await this.prismaService.category.delete({
                 where: { id, domain: user.domain },

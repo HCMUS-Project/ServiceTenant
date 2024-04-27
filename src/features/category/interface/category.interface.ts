@@ -18,7 +18,10 @@ export interface IFindOneCategoryRequest extends FindOneCategoryRequest.AsObject
 export interface IFindOneCategoryResponse extends FindOneCategoryResponse.AsObject {}
 
 export interface IFindAllCategoriesRequest extends FindAllCategoriesRequest.AsObject {}
-export interface IFindAllCategoriesResponse extends FindAllCategoriesResponse.AsObject {}
+export interface IFindAllCategoriesResponse
+    extends Omit<FindAllCategoriesResponse.AsObject, 'categoriesList'> {
+    categories: FindOneCategoryResponse.AsObject[];
+}
 
 export interface IUpdateCategoryRequest extends UpdateCategoryRequest.AsObject {}
 export interface IUpdateCategoryResponse extends UpdateCategoryResponse.AsObject {}

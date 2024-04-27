@@ -24,7 +24,7 @@ export class CategoryController {
     }
 
     @GrpcMethod('CategoryService', 'FindAllCategories')
-    async findAll(data: IFindAllCategoriesRequest): Promise<IFindAllCategoriesResponse> {
+    async findAll(data: IFindAllCategoriesRequest): Promise<any> {
         return await this.categoryService.findAll(data.user.domain);
     }
 
@@ -38,7 +38,7 @@ export class CategoryController {
         return await this.categoryService.update(data);
     }
 
-    @GrpcMethod('CategoryService', 'UpdateCategory')
+    @GrpcMethod('CategoryService', 'RemoveCategory')
     async remove(data: IRemoveCategoryRequest): Promise<IRemoveCategoryResponse> {
         return this.categoryService.remove(data);
     }
