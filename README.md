@@ -28,15 +28,16 @@
 
 [gRPC](https://docs.nestjs.com/microservices/grpc) config for service ecommerce.
 
-## Installation
+# Installation
 
 ```bash
 $ npm install
 $ npm run gen:proto_folder
 $ npm run gen:proto
+$ npm run generate
 ```
 
-## Running the app
+# Running the app
 
 ```bash
 # development
@@ -49,11 +50,27 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Env
+# Env
 
 ```bash
 # copy from example.env
 $ cp example.env .env
+```
+
+# Migrate db with prisma
+
+```bash
+# migrate database with schema
+$ migrate_name=<name> npm run migrate
+```
+
+`<name>`: is name folder migrate
+
+### Example Commit Messages
+
+```bash
+# example migrate database
+$ migrate_name="hello_word" npm run migrate
 ```
 
 # Commit Guidelines

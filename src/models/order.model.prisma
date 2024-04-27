@@ -1,0 +1,12 @@
+model Order {
+  id                 String   @id @default(uuid())
+  user_id            String
+  product_ids        String[]
+  product_quantities Int[]
+  total_price        Decimal  @commerce_db.Decimal(19, 2)
+  status             String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
