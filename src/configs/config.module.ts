@@ -6,7 +6,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { ServiceConfig } from 'src/configs/service/service.config';
 import appConfig from './app/app.config';
-import dataBaseConfig from './database/mongo/mongo.config';
+import dataBaseConfig from './database/postgres/postgres.config';
 import nodeMailerConfig from './node_mailer/node_mailer.config';
 
 @Global()

@@ -1,20 +1,19 @@
 model Product {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  price       Decimal   @commerce_db.Decimal(19, 2)
-  quantity    Int
-  tenant_id   String
-  description String
-  image       String[]
-  views       Int
-  rating      Decimal   @commerce_db.Decimal(19, 1)
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  deleted_at  DateTime?
+    id          String    @id @default(uuid())
+    name        String    @unique
+    price       Decimal   @commerce_db.Decimal(19, 2)
+    quantity    Int
+    description String
+    image       String[]
+    views       Int
+    rating      Decimal   @commerce_db.Decimal(19, 1)
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_at  DateTime?
 
-  reviews   Review[]
-  cartItems CartItem[]
+    reviews   Review[]
+    cartItems CartItem[]
 
-  // Define the many-to-many relationship with categories through a junction table
-  categories ProductCategory[]
+    // Define the many-to-many relationship with categories through a junction table
+    categories ProductCategory[]
 }

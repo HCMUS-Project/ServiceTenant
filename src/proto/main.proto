@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "auth/user_token.proto";
+import "e_commerce/category.proto";
 
 package main;
 

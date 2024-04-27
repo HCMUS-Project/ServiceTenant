@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { GrpcUnauthenticatedException } from 'nestjs-grpc-exceptions';
-import { Role } from 'src/common/enums/role.enum';
+import { Role } from 'src/proto_build/auth/user_token_pb';
 
 @Injectable()
 export class Jwt {

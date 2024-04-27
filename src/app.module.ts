@@ -8,9 +8,18 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { GrpcExceptionFilter } from './core/response/exception.filter';
 import { ResponseInterceptor } from './core/response/response.interceptor';
 import { CacheModule } from './core/cache/modules/cache.module';
+import { PrismaModule } from './core/prisma/prisma.module';
+import { FeaturesModule } from './features/index.module';
 
 @Module({
-    imports: [LoggerModule, ConfigsModule, ContextModule, CacheModule],
+    imports: [
+        LoggerModule,
+        ConfigsModule,
+        ContextModule,
+        CacheModule,
+        PrismaModule,
+        FeaturesModule,
+    ],
     controllers: [AppController],
     providers: [
         AppService,

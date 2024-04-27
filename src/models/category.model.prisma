@@ -1,11 +1,12 @@
 model Category {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  description String
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  deleted_at  DateTime?
+    id          String    @id @default(uuid())
+    name        String    @unique
+    description String
+    domain      String
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_at  DateTime?
 
-  vouchers        Voucher[]
-  ProductCategory ProductCategory[]
+    vouchers        Voucher[]
+    ProductCategory ProductCategory[]
 }
