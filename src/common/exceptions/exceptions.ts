@@ -36,9 +36,9 @@ export class ValidationFailedException extends BadRequestException {
     }
 }
 
-export class ForbiddenException extends HttpException {
+export class ForbiddenException extends BadRequestException {
     constructor(message: string, error: string) {
-        super(message, HttpStatus.FORBIDDEN);
+        super(message, error);
     }
 }
 
