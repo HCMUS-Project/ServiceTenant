@@ -5,15 +5,15 @@ import { Type } from 'class-transformer';
 export class CreateReviewDto {
     @IsString()
     @IsNotEmpty()
-    id: string;
+    domain: string;
 
     @IsString()
     @IsNotEmpty()
-    productId: string;
+    product_id: string;
 
     @IsString()
     @IsNotEmpty()
-    userId: string;
+    user_id: string;
 
     @IsNumber({}, { message: 'Rating must be a number' })
     @Min(1, { message: 'Rating must be at least 1' })
@@ -23,8 +23,4 @@ export class CreateReviewDto {
     @IsString()
     @IsNotEmpty()
     review: string;
-
-    @ValidateNested()
-    @Type(() => ProductDto)
-    product: ProductDto;
 }

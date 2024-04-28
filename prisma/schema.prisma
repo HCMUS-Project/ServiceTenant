@@ -70,10 +70,11 @@ model Cart {
   user_id     String
   cartItems   CartItem[]
   total_price Decimal    @commerce_db.Decimal(19, 2)
-  status      String
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
   deleted_at  DateTime?
+
+  @@unique([domain, user_id], name: "unique_cart_domain_user_id")
 }
 
 model CartItem {
@@ -94,7 +95,7 @@ model Order {
   product_ids        String[]
   product_quantities Int[]
   total_price        Decimal  @commerce_db.Decimal(19, 2)
-  status             String
+  stage              String
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt

@@ -33,7 +33,7 @@ export class ProductService {
 
             // Tạo mới các bản ghi trong bảng ProductCategory
             const productCategories = [];
-            for (const categoryId of createProductDto.category_id) {
+            for (const categoryId of createProductDto.categories_id) {
                 const category = await this.prismaService.category.findUnique({
                     where: {
                         id: categoryId,
@@ -133,7 +133,7 @@ export class ProductService {
                 data: newData,
             });
 
-            if (updateProductDto.category_id !== undefined) {
+            if (updateProductDto.categories_id !== undefined) {
                 const currentProductCategories = await this.prismaService.productCategory.findMany({
                     where: {
                         productId: id,
@@ -149,7 +149,7 @@ export class ProductService {
 
                 // Lặp qua danh sách category mới từ dữ liệu gửi tới
                 await Promise.all(
-                    updateProductDto.category_id.map(async categoryId => {
+                    updateProductDto.categories_id.map(async categoryId => {
                         // Nếu categoryId không tồn tại trong danh sách category hiện tại, tạo mới
                         if (!currentCategoryIds.includes(categoryId)) {
                             await this.prismaService.productCategory.create({
@@ -164,7 +164,7 @@ export class ProductService {
 
                 // Xác định và xoá các category không được gửi lên
                 const categoriesToDelete = currentCategoryIds.filter(
-                    categoryId => !updateProductDto.category_id.includes(categoryId),
+                    categoryId => !updateProductDto.categories_id.includes(categoryId),
                 );
                 await Promise.all(
                     categoriesToDelete.map(async categoryId => {

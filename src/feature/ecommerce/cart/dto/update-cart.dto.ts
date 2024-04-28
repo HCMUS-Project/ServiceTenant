@@ -1,26 +1,21 @@
-import { IsOptional, IsDecimal, IsString, IsUUID, ValidateNested, IsArray } from 'class-validator';
-import { Type as TransformType } from 'class-transformer';
-
-export class CartProductDto {
-    @IsUUID()
-    product_id: string;
-
-    @IsDecimal()
-    quantity: number; // Giả sử quantity có thể là số thập phân nếu bạn cho phép sản phẩm có số lượng không nguyên
-}
+import { IsOptional, IsDecimal, IsString, IsUUID, ValidateNested, IsArray, IsNotEmpty, ArrayMinSize } from 'class-validator';
 
 export class UpdateCartDto {
-    @IsDecimal()
-    @IsOptional()
-    total_price?: number;
+    @IsUUID()
+    @IsNotEmpty()
+    user_id: string;
 
     @IsString()
-    @IsOptional()
-    status?: string;
+    @IsNotEmpty()
+    domain: string;
 
+    @IsNotEmpty()
     @IsArray()
-    @IsOptional()
-    @ValidateNested({ each: true })
-    @TransformType(() => CartProductDto)
-    products?: CartProductDto[];
+    @ArrayMinSize(1)
+    products_id: string[];
+
+    @IsNotEmpty()
+    @IsArray()
+    @ArrayMinSize(1)
+    quantities: number[];
 }

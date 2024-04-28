@@ -52,5 +52,5 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
     @IsNotEmpty()
     @IsArray()
     @ArrayMinSize(1)
-    category_id: string[];
+    categories_id: string[];
 }

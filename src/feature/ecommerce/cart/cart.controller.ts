@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
@@ -12,14 +12,14 @@ export class CartController {
         return this.cartService.create(createCartDto);
     }
 
-    @Get()
-    findAll() {
-        return this.cartService.findAll();
+    @Get(':id')
+    findAll(@Param('id') id: string, @Headers('domain') domain: string) {
+        return this.cartService.findById(id, domain);
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.cartService.findOne(id);
+    @Get('/user/:id')
+    findOne(@Param('id') id: string, @Headers('domain') domain: string){
+        return this.cartService.findByUserId(id, domain);
     }
 
     @Patch(':id')

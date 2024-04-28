@@ -20,6 +20,7 @@ import { Product } from './feature/ecommerce/product/entities/product.entity';
 import { ProductModule } from './feature/ecommerce/product/product.module';
 import { CategoryModule } from './feature/ecommerce/category/category.module';
 import { CartModule } from './feature/ecommerce/cart/cart.module';
+import { ReviewModule } from './feature/ecommerce/review/review.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { CartModule } from './feature/ecommerce/cart/cart.module';
         ProductModule,
         CategoryModule,
         CartModule,
+        ReviewModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

@@ -51,10 +51,14 @@ export class CategoryService {
 
     update(id: string, updateCategoryDto: UpdateCategoryDto) {
         try {
+            const newData = {
+                ...updateCategoryDto,
+                updated_at: new Date(), // Add the 'updated_at' property
+            };
             return this.prismaService.category.update({
                 where: { id: id, domain: updateCategoryDto.domain },
                 data: {
-                    ...updateCategoryDto,
+                    ...newData, // Use the updated 'newData' object
                 },
             });
         } catch (error) {
