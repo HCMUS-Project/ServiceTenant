@@ -6,6 +6,7 @@ import { ConfigsModule } from './configs/config.module';
 import NestjsLoggerServiceAdapter from './core/logger/modules/logger.adapter';
 import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
@@ -15,6 +16,8 @@ async function bootstrap() {
     // Config the logger
     const customLogger = app.get(NestjsLoggerServiceAdapter);
     app.useLogger(customLogger);
+
+    app.useGlobalPipes(new ValidationPipe());
 
     // Config the filter for the exceptions
     app.useGlobalFilters(new ExceptionsFilter());

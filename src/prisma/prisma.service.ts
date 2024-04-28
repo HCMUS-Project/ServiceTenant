@@ -4,9 +4,9 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-  constructor(config: ConfigService) {
-    super({
-        datasourceUrl: config.get('DATABASE_URL'),
-    });
-  }
+    constructor(config: ConfigService) {
+        super({
+            datasourceUrl: config.get('DATABASE_URL'),
+        });
+    }
 }

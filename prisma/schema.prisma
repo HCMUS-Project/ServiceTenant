@@ -15,7 +15,8 @@ datasource commerce_db {
 
 model Product {
   id          String    @id @default(uuid())
-  name        String    @unique
+  domain      String    @default("")
+  name        String
   price       Decimal   @commerce_db.Decimal(19, 2)
   quantity    Int
   tenant_id   String
@@ -32,11 +33,14 @@ model Product {
 
   // Define the many-to-many relationship with categories through a junction table
   categories ProductCategory[]
+
+  @@unique([domain, name], name: "unique_product_domain_name")
 }
 
 model Category {
   id          String    @id @default(uuid())
-  name        String    @unique
+  domain      String    @default("")
+  name        String
   description String
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
@@ -44,6 +48,8 @@ model Category {
 
   vouchers        Voucher[]
   ProductCategory ProductCategory[]
+
+  @@unique([domain, name], name: "unique_category_domain_name")
 }
 
 model ProductCategory {
@@ -51,6 +57,7 @@ model ProductCategory {
   product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
+  name      String @default("")
   productId  String
   categoryId String
 
@@ -59,6 +66,7 @@ model ProductCategory {
 
 model Cart {
   id          String     @id @default(uuid())
+  domain      String
   user_id     String
   cartItems   CartItem[]
   total_price Decimal    @commerce_db.Decimal(19, 2)
@@ -69,6 +77,7 @@ model Cart {
 }
 
 model CartItem {
+  id         String  @id @default(uuid())
   cart_id    String
   product_id String
   quantity   Int
@@ -80,6 +89,7 @@ model CartItem {
 
 model Order {
   id                 String   @id @default(uuid())
+  domain             String
   user_id            String
   product_ids        String[]
   product_quantities Int[]
@@ -93,6 +103,7 @@ model Order {
 
 model Voucher {
   id               String   @id @default(uuid())
+  domain           String
   voucher_name     String
   voucher_code     String
   max_discount     Decimal  @commerce_db.Decimal(19, 2)
@@ -109,6 +120,7 @@ model Voucher {
 
 model Review {
   id         String  @id @default(uuid())
+  domain     String
   product_id String
   user_id    String
   rating     Decimal @commerce_db.Decimal(19, 1)

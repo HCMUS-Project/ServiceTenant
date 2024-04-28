@@ -1,43 +1,56 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateProductDto } from './create-product.dto';
-import { IsString, IsNumber, IsInt, IsOptional, IsNotEmpty, IsArray, ArrayMinSize } from 'class-validator';
+import {
+    IsString,
+    IsNumber,
+    IsInt,
+    IsOptional,
+    IsNotEmpty,
+    IsArray,
+    ArrayMinSize,
+    IsNotEmptyObject,
+} from 'class-validator';
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-  @IsString()
-  @IsOptional()
-  name?: string;
+    @IsString()
+    @IsNotEmpty()
+    domain: string;
 
-  @IsNumber()
-  @IsOptional()
-  price?: number;
+    @IsString()
+    @IsOptional()
+    name?: string;
 
-  @IsInt()
-  @IsOptional()
-  quantity?: number;
+    @IsNumber()
+    @IsOptional()
+    price?: number;
 
-  @IsString()
-  @IsOptional()
-  tenant_id?: string;
+    @IsInt()
+    @IsOptional()
+    quantity?: number;
 
-  @IsString()
-  @IsOptional()
-  description?: string;
+    @IsString()
+    @IsOptional()
+    tenant_id?: string;
 
-  @IsString()
-  @IsArray()
-  @ArrayMinSize(1)
-  image: string[];
-  
-  @IsInt()
-  @IsOptional()
-  views?: number;
+    @IsString()
+    @IsOptional()
+    description?: string;
 
-  @IsNumber()
-  @IsOptional()
-  rating?: number;
+    @IsString()
+    @IsArray()
+    @ArrayMinSize(1)
+    image: string[];
 
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayMinSize(1)
-  category_id: string[];
+    @IsInt()
+    @IsOptional()
+    views?: number;
+
+    @IsNumber()
+    @IsOptional()
+    rating?: number;
+
+    @IsNotEmpty()
+    @IsArray()
+    @ArrayMinSize(1)
+    category_id: string[];
 }
