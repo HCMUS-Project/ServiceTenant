@@ -1,36 +1,49 @@
-import { IsString, IsNotEmpty, IsUUID, IsNumber, IsInt, IsOptional, IsArray, ArrayMinSize } from 'class-validator';
+import {
+    IsString,
+    IsNotEmpty,
+    IsUUID,
+    IsNumber,
+    IsInt,
+    IsOptional,
+    IsArray,
+    ArrayMinSize,
+} from 'class-validator';
 
 export class CreateProductDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+    @IsString()
+    @IsNotEmpty()
+    domain: string;
 
-  @IsNumber()
-  price: number;
+    @IsString()
+    @IsNotEmpty()
+    name: string;
 
-  @IsInt()
-  quantity: number;
+    @IsNumber()
+    price: number;
 
-  @IsString()
-  @IsOptional()
-  tenant_id?: string;
+    @IsInt()
+    quantity: number;
 
-  @IsString()
-  description: string;
+    @IsString()
+    @IsOptional()
+    tenant_id?: string;
 
-  @IsString()
-  @IsArray()
-  @ArrayMinSize(1)
-  image: string[];
+    @IsString()
+    description: string;
 
-  @IsInt()
-  views: number;
+    @IsNotEmpty()
+    @IsArray()
+    @ArrayMinSize(1)
+    image: string[];
 
-  @IsNumber()
-  rating: number;
+    @IsInt()
+    views: number;
 
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayMinSize(1)
-  category_id: string[];
+    @IsNumber()
+    rating: number;
+
+    @IsNotEmpty()
+    @IsArray()
+    @ArrayMinSize(1)
+    categories_id: string[];
 }

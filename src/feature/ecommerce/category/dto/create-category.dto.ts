@@ -2,10 +2,14 @@
 import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateCategoryDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+    @IsString()
+    @IsNotEmpty()
+    domain: string;
 
-  @IsString()
-  description: string;
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
+    @IsString()
+    description: string;
 }

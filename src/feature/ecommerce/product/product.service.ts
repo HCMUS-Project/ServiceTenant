@@ -2,195 +2,297 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ProductDto } from './dto/product.dto';
 import { SupabaseService } from '../supabase/supabase.service';
 import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProductService {
-  constructor(private prismaService: PrismaService,
-              private supabaseService: SupabaseService
-  ){}
+    constructor(
+        private prismaService: PrismaService,
+        private supabaseService: SupabaseService,
+    ) {}
 
-  async create(createProductDto: CreateProductDto) {
-    try {
-      const imageLink = await this.supabaseService.uploadImageAndGetLink(createProductDto.image);
-      const product = await this.prismaService.product.create({
-        data: {
-          name: createProductDto.name,
-          price: createProductDto.price,
-          quantity: createProductDto.quantity,
-          tenant_id: createProductDto.tenant_id,
-          description: createProductDto.description,
-          image: imageLink,
-          views: createProductDto.views,
-          rating: createProductDto.rating,
-        },
-      });
-      
-      const productCategories = createProductDto.category_id.map((categoryId) => {
-        return this.prismaService.productCategory.create({
-          data: {
-            productId: product.id,
-            categoryId: categoryId,
-          },
+    async create(createProductDto: CreateProductDto) {
+        try {
+            const imageLink = await this.supabaseService.uploadImageAndGetLink(
+                createProductDto.image,
+            );
+            const product = await this.prismaService.product.create({
+                data: {
+                    domain: createProductDto.domain,
+                    name: createProductDto.name,
+                    price: createProductDto.price,
+                    quantity: createProductDto.quantity,
+                    tenant_id: createProductDto.tenant_id,
+                    description: createProductDto.description,
+                    image: imageLink,
+                    views: createProductDto.views,
+                    rating: createProductDto.rating,
+                },
+            });
+
+            // Tạo mới các bản ghi trong bảng ProductCategory
+            const productCategories = [];
+            for (const categoryId of createProductDto.categories_id) {
+                const category = await this.prismaService.category.findUnique({
+                    where: {
+                        id: categoryId,
+                    },
+                    select: {
+                        name: true,
+                    },
+                });
+
+                if (!category) {
+                    throw new Error(`Category with ID ${categoryId} not found`);
+                }
+
+                // Tạo mới một bản ghi trong bảng ProductCategory với trường name lấy từ category
+                const productCategory = this.prismaService.productCategory.create({
+                    data: {
+                        productId: product.id,
+                        categoryId: categoryId,
+                        name: category.name,
+                    },
+                });
+
+                productCategories.push(productCategory);
+            }
+
+            // Thực hiện tạo mới các bản ghi trong bảng ProductCategory trong một giao dịch
+            await this.prismaService.$transaction(productCategories);
+
+            return product;
+        } catch (error) {
+            if (error.code === 'P2002') {
+                throw new Error('Product name exists. Please choose another name.');
+            }
+
+            throw new Error(error.message);
+        }
+    }
+
+    async findAll(domain: string) {
+        try {
+            return await this.prismaService.product.findMany(
+                // Include domain
+                {
+                    where: {
+                        domain: domain,
+                    },
+                    include: {
+                        categories: {
+                            select: {
+                                categoryId: true,
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            );
+        } catch (error) {
+            throw new Error('Failed to fetch products. Please try again.');
+        }
+    }
+
+    async findOne(id: string, domain: string) {
+        try {
+            return await this.prismaService.product.findUnique({
+                where: {
+                    id: id,
+                    domain: domain,
+                },
+                include: {
+                    categories: {
+                        select: {
+                            categoryId: true,
+                            name: true,
+                        },
+                    },
+                },
+            });
+        } catch (error) {
+            throw new Error('Failed to fetch product. Please try again.');
+        }
+    }
+
+    async update(id: string, updateProductDto: UpdateProductDto) {
+        try {
+            const newData: any = { ...updateProductDto };
+
+            if (Array.isArray(updateProductDto.image)) {
+                const imageLink = await this.supabaseService.uploadImageAndGetLink(
+                    updateProductDto.image,
+                );
+                newData.image = imageLink;
+            }
+            newData.updated_at = new Date();
+            newData.category_id = undefined;
+            const updatedProduct = await this.prismaService.product.update({
+                where: { id: id, domain: updateProductDto.domain },
+                data: newData,
+            });
+
+            if (updateProductDto.categories_id !== undefined) {
+                const currentProductCategories = await this.prismaService.productCategory.findMany({
+                    where: {
+                        productId: id,
+                    },
+                    select: {
+                        categoryId: true,
+                    },
+                });
+
+                const currentCategoryIds = currentProductCategories.map(
+                    category => category.categoryId,
+                );
+
+                // Lặp qua danh sách category mới từ dữ liệu gửi tới
+                await Promise.all(
+                    updateProductDto.categories_id.map(async categoryId => {
+                        // Nếu categoryId không tồn tại trong danh sách category hiện tại, tạo mới
+                        if (!currentCategoryIds.includes(categoryId)) {
+                            await this.prismaService.productCategory.create({
+                                data: {
+                                    productId: id,
+                                    categoryId: categoryId,
+                                },
+                            });
+                        }
+                    }),
+                );
+
+                // Xác định và xoá các category không được gửi lên
+                const categoriesToDelete = currentCategoryIds.filter(
+                    categoryId => !updateProductDto.categories_id.includes(categoryId),
+                );
+                await Promise.all(
+                    categoriesToDelete.map(async categoryId => {
+                        await this.prismaService.productCategory.deleteMany({
+                            where: {
+                                AND: [
+                                    {
+                                        productId: id,
+                                    },
+                                    {
+                                        categoryId: categoryId,
+                                    },
+                                ],
+                            },
+                        });
+                    }),
+                );
+            }
+
+            return updatedProduct;
+        } catch (error) {
+            console.log('Failed to update product:', error);
+            // Thông báo lỗi sẽ được trả về cho client
+            throw new Error('Failed to update product. Error: ' + error.message);
+        }
+    }
+
+    remove(id: string, domain: string) {
+        try {
+            return this.prismaService.product.delete({
+                where: {
+                    id: id,
+                    domain: domain,
+                },
+            });
+        } catch (error) {
+            throw new Error('Failed to delete product. Please try again.');
+        }
+    }
+
+    async searchWithFilters(
+        filters: { name?: string; category?: string; price?: number; rating?: number },
+        domain: string,
+    ): Promise<any[]> {
+        const { name, category, price, rating } = filters;
+
+        let productsQuery = await this.prismaService.product.findMany({
+            where: {
+                domain: domain,
+            },
         });
-      })
-      await this.prismaService.$transaction(productCategories);
+
+        // Áp dụng bộ lọc nếu có
+        if (name) {
+            productsQuery = productsQuery.filter(product => product.name.includes(name));
+        }
+        
+        if (category) {
+          const categoryId = await this.findCategoryIdByName(category);
+          if (categoryId) {
+              // Lấy danh sách productId từ bảng ProductCategory
+              const productIds = await this.prismaService.productCategory.findMany({
+                  where: {
+                      categoryId: categoryId,
+                  },
+                  select: {
+                      productId: true,
+                  },
+              });
       
-      return product;
-    } catch (error) {
-      if (error.code === 'P2002') {
-        throw new Error('Product name exists. Please choose another name.');
+              // Lọc ra các productId có trong productQuery
+              const validProductIds = productIds.map(pc => pc.productId).filter(productId =>
+                  productsQuery.some(product => product.id === productId)
+              );
+      
+              // Lấy các sản phẩm có productId trong danh sách validProductIds
+              productsQuery = await this.prismaService.product.findMany({
+                  where: {
+                      id: {
+                          in: validProductIds,
+                      },
+                  },
+              });
+          }
       }
+        
 
-      throw new Error(error.message);
+        if (price) {
+          productsQuery = productsQuery.filter(product => {
+            const priceDiff = Math.abs(Number(product.price) - price);
+            const priceDiffPercentage = (priceDiff / price) * 100;
+            return priceDiffPercentage <= 20;
+          }
+          );
+        }
+
+        if (rating) {
+          productsQuery = productsQuery.filter(product => Number(product.rating) >= rating);
+        }
+
+        // Trả về kết quả
+        return productsQuery;
     }
-  }
 
-  async findAll() {
-    try {
-      return await this.prismaService.product.findMany();
-    } catch (error) {
-      throw new Error('Failed to fetch products. Please try again.');
-    }
-  }
-
-  async findOne(id: string) {
-    try {
-      return await this.prismaService.product.findUnique({
+    async findCategoryIdByName(categoryName: string): Promise<string | null> {
+      const category = await this.prismaService.category.findFirst({
         where: {
-          id: id,
+          name: categoryName,
         },
-      });
-    } catch (error) {
-      throw new Error('Failed to fetch product. Please try again.');
-    }
-  }
-
-  async update(id: string, updateProductDto: UpdateProductDto) {
-    try {
-      const newData: any = { ...updateProductDto };
-  
-      if (Array.isArray(updateProductDto.image)) {
-        const imageLink = await this.supabaseService.uploadImageAndGetLink(updateProductDto.image);
-        newData.image = { set: imageLink };
-      }
-  
-      const updatedProduct = await this.prismaService.product.update({
-        where: { id },
-        data: newData,
-      });
-  
-      return updatedProduct;
-    } catch (error) {
-      throw new Error(`Failed to update product: ${error.message}`);
-    }
-  }
-
-  remove(id: string) {
-    try {
-      return this.prismaService.product.delete({
-        where: {
-          id: id,
-        },
-      });
-    } catch (error) {
-      throw new Error('Failed to delete product. Please try again.');
-    }
-  }
-
-  async searchByNameAndCategory(name: string, category: string): Promise<any[]> {
-    try {
-      // Find the category ID based on the category name
-      const categoryInfo = await this.prismaService.category.findUnique({
-        where: {
-          name: category,
+        select: {
+          id: true,
         },
       });
   
-      if (!categoryInfo) {
-        // If the category doesn't exist, return an empty array
-        return [];
-      }
-  
-      // Find products that match the name and are associated with the category
-      const products = await this.prismaService.product.findMany({
-        where: {
-          name: {
-            contains: name,
-          },
-          categories: {
-            some: {
-              categoryId: categoryInfo.id,
-            },
-          },
-        },
-      });
-  
-      return products;
-    } catch (error) {
-      // Handle errors
-      throw new Error(`Error searching products: ${error}`);
+      return category ? category.id : null;
     }
-  }
-  
 
-  async searchByName(name: string): Promise<any[]> {
-    try {
-      const products: any[] = await this.prismaService.product.findMany({
-        where: {
-          name: {
-            contains: name,
-          },
-        },
-      });
-      return products;
-    } catch (error) {
-      throw new Error('Failed to search products by name. Please try again.');
+    async getPriceOfProduct(productId: string): Promise<Decimal> {
+        try {
+            const product = await this.prismaService.product.findUnique({
+                where: {
+                    id: productId,
+                },
+            });
+
+            return product.price;
+        } catch (error) {
+            throw new Error('Failed to get price of product. Please try again.');
+        }
     }
-  }
-
-  async searchByCategory(category: string): Promise<any[]> {
-    try {
-      // Find the category ID based on the category name
-      const categoryInfo = await this.prismaService.category.findUnique({
-        where: {
-          name: category,
-        },
-      });
-  
-      if (!categoryInfo) {
-        // If the category doesn't exist, return an empty array
-        return [];
-      }
-
-      const products = await this.prismaService.product.findMany({
-        where: {
-          categories: {
-            some: {
-              categoryId: categoryInfo.id,
-            },
-          },
-        },
-      });
-      return products;
-    } catch (error) {
-      throw new Error('Failed to search products by category. Please try again.');
-    }
-  }
-  
-  async getPriceOfProduct(productId: string): Promise<Decimal> {
-    try {
-      const product = await this.prismaService.product.findUnique({
-        where: {
-          id: productId,
-        },
-      });
-
-      return product.price;
-    } catch (error) {
-      throw new Error('Failed to get price of product. Please try again.');
-    }
-  }
 }

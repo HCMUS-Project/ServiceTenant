@@ -1,18 +1,28 @@
-import { IsString, IsUUID, IsInt, ValidateNested, IsDecimal, IsNotEmpty, IsArray, ArrayMinSize } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ProductDto } from '../../product/dto/product.dto'
+import {
+    IsString,
+    IsUUID,
+    IsDecimal,
+    IsNotEmpty,
+    IsArray,
+    ArrayMinSize,
+} from 'class-validator';
 
 export class CreateCartDto {
-  @IsUUID()
-  user_id: string;
+    @IsUUID()
+    @IsNotEmpty()
+    user_id: string;
 
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => ProductDto)
-  products: ProductDto[];
+    @IsString()
+    @IsNotEmpty()
+    domain: string;
 
-  @IsDecimal()
-  total_price: number;
+    @IsNotEmpty()
+    @IsArray()
+    @ArrayMinSize(1)
+    products_id: string[];
+
+    @IsNotEmpty()
+    @IsArray()
+    @ArrayMinSize(1)
+    quantities: number[];
 }
