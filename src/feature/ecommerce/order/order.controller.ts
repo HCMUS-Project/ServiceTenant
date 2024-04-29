@@ -32,9 +32,9 @@ export class OrderController {
     return this.orderService.getHistoryOrderOfUser(user_id, domain);
   }
 
-  @Get('/user/history/:user_id/:id')
-  checkOrderOfUser(@Param('user_id') user_id: string, @Param('id') id: string, @Headers('domain') domain: string){
-    return this.orderService.checkOrderOfUser(user_id, id, domain);
+  @Get('/checkPurchased/user/:user_id')
+  checkOrderOfUser(@Param('user_id') user_id: string, @Headers('domain') domain: string, @Headers('product_id') product_id: string){
+    return this.orderService.checkUserPurchase(user_id, domain, product_id);
   }
 
   @Patch(':id')

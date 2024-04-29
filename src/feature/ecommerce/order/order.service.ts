@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -214,27 +214,23 @@ export class OrderService {
     }
   }
 
-  async checkOrderOfUser(user_id: string, id: string, domain: string) {
+  async checkUserPurchase(userId: string, domain: string, productId: string) {
+    // Tìm đơn hàng với id, domain và userId chỉ định
     try{
-      const order = await this.findOne(id, domain)
-      if (order === undefined || order === null) {
-        throw new Error('Order not found');
-      }
-
-      if (order.user_id !== user_id) {
-        throw new Error('User don\'t purchase this order');
-      }
-      const checkOrder = await this.prismaService.order.findUnique({
+      const orderItems = await this.prismaService.orderItem.findMany({
         where: {
-          id: id,
-          user_id: user_id,
-          domain: domain,
+          product_id: productId,
         },
         include: {
-          orderItems: true,
+          order: true,
         },
       });
-      return checkOrder.stage;
+      for (let i = 0; i < orderItems.length; i++) {
+        if (orderItems[i].product_id === productId &&  orderItems[i].order.user_id === userId && orderItems[i].order.stage === "completed") {
+          return true;
+        }
+      }
+      return false;
     }
     catch (error) {
       throw new Error(error.message);
