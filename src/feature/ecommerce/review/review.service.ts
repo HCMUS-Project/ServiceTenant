@@ -2,13 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductService } from '../product/product.service';
+import { OrderModule } from '../order/order.module';
 
 @Injectable()
 export class ReviewService {
-    constructor(private prismaService: PrismaService) {}
+    constructor(private prismaService: PrismaService,
+        private productService: ProductService,
+        private orderModule: OrderModule,
+    ) {}
 
     async create(createReviewDto: CreateReviewDto) {
         try{
+            
             const review = await this.prismaService.review.create({
                 data: {
                     domain: createReviewDto.domain,
@@ -18,6 +24,8 @@ export class ReviewService {
                     review: createReviewDto.review,
                 },
             });
+            this.productService.updateProductRating(createReviewDto.product_id, createReviewDto.rating);
+
             return review;
         }
         catch(error){

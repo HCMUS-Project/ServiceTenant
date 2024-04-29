@@ -21,6 +21,8 @@ import { ProductModule } from './feature/ecommerce/product/product.module';
 import { CategoryModule } from './feature/ecommerce/category/category.module';
 import { CartModule } from './feature/ecommerce/cart/cart.module';
 import { ReviewModule } from './feature/ecommerce/review/review.module';
+import { VoucherModule } from './feature/ecommerce/voucher/voucher.module';
+import { OrderModule } from './feature/ecommerce/order/order.module';
 
 @Module({
     imports: [
@@ -34,6 +36,8 @@ import { ReviewModule } from './feature/ecommerce/review/review.module';
         CategoryModule,
         CartModule,
         ReviewModule,
+        VoucherModule,
+        OrderModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

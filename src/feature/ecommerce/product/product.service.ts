@@ -282,6 +282,89 @@ export class ProductService {
       return category ? category.id : null;
     }
 
+    async increaseProductViews(productId: string): Promise<void> {
+        try {
+            await this.prismaService.product.update({
+                where: {
+                    id: productId,
+                },
+                data: {
+                    views: {
+                        increment: 1,
+                    },
+                },
+            });
+        } catch (error) {
+            throw new Error('Failed to increase product views. Please try again.');
+        }
+    }
+
+    // write function add quantity of product
+    async addProductQuantity(productId: string, quantity: number): Promise<void> {
+        try {
+            await this.prismaService.product.update({
+                where: {
+                    id: productId,
+                },
+                data: {
+                    quantity: {
+                        increment: quantity,
+                    },
+                },
+            });
+        } catch (error) {
+            throw new Error('Failed to add product quantity. Please try again.');
+        }
+    }
+
+    async updateProductSold(productId: string, quantity: number): Promise<void> {
+        try {
+            await this.prismaService.product.update({
+                where: {
+                    id: productId,
+                },
+                data: {
+                    quantity: {
+                        decrement: quantity,
+                    },
+                    sold: {
+                        increment: quantity,
+                    },
+                },
+            });
+        } catch (error) {
+            throw new Error('Failed to decrease product quantity. Please try again.');
+        }
+    }
+
+    async updateProductRating(productId: string, rating: number): Promise<void> {
+        try {
+            const product = await this.prismaService.product.findUnique({
+                where: {
+                    id: productId,
+                },
+                select: {
+                    rating: true,
+                    number_rating: true,
+                },
+            });
+
+            await this.prismaService.product.update({
+                where: {
+                    id: productId,
+                },
+                data: {
+                    rating: Number((Number(product.rating) * Number(product.number_rating)) + rating)/(Number(product.number_rating) + 1),
+                    number_rating: {
+                        increment: 1,
+                    }
+                },
+            });
+        } catch (error) {
+            throw new Error('Failed to update product rating. Please try again.');
+        }
+    }
+
     async getPriceOfProduct(productId: string): Promise<Decimal> {
         try {
             const product = await this.prismaService.product.findUnique({

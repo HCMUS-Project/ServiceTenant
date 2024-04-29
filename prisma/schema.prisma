@@ -24,12 +24,15 @@ model Product {
   image       String[]
   views       Int
   rating      Decimal   @commerce_db.Decimal(19, 1)
+  number_rating Int @default(0)
+  sold        Int       @default(0)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
   reviews   Review[]
   cartItems CartItem[]
+  orderItems OrderItem[]
 
   // Define the many-to-many relationship with categories through a junction table
   categories ProductCategory[]
@@ -46,7 +49,6 @@ model Category {
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 
-  vouchers        Voucher[]
   ProductCategory ProductCategory[]
 
   @@unique([domain, name], name: "unique_category_domain_name")
@@ -92,14 +94,29 @@ model Order {
   id                 String   @id @default(uuid())
   domain             String
   user_id            String
-  product_ids        String[]
-  product_quantities Int[]
+  orderItems         OrderItem[]
   total_price        Decimal  @commerce_db.Decimal(19, 2)
   stage              String
+
+  voucher_id         String?
+  voucher_discount   Decimal? @commerce_db.Decimal(19, 2)
+
+  price_after_voucher Decimal  @commerce_db.Decimal(19, 2)
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
+}
+
+model OrderItem {
+  id         String  @id @default(uuid())
+  order_id   String
+  product_id String
+  quantity   Int
+  order      Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([order_id, product_id])
 }
 
 model Voucher {
@@ -115,8 +132,6 @@ model Voucher {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
 }
 
 model Review {
