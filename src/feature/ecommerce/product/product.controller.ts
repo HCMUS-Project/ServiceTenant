@@ -13,6 +13,7 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { min } from 'class-validator';
 
 @Controller('api/product')
 export class ProductController {
@@ -46,15 +47,16 @@ export class ProductController {
 
     @Get('search')
     search(
-        @Query() query: { name?: string; category?: string; price?: number; rating?: number },
+        @Query() query: { name?: string; category?: string; min_price?: number; max_price?: number; rating?: number },
         @Headers('domain') domain: string,
     ) {
-        const { name, category, price, rating } = query;
+        const { name, category, min_price, max_price, rating } = query;
 
         const filters = {
             name,
             category,
-            price,
+            min_price: min_price,
+            max_price: max_price,
             rating,
         };
 
@@ -72,13 +74,8 @@ export class ProductController {
         return this.productService.increaseProductViews(id);
     }
 
-    @Post('update-sold/:id')
-    updateProductSold(@Param('id') id: string, @Body() quantity: number) {
-        return this.productService.updateProductSold(id, quantity);
-    }
-
-    @Post('update-rating/:id')
-    updateProductRating(@Param('id') id: string, @Body() rating: number) {
-        return this.productService.updateProductRating(id, rating);
+    @Post('add_quantity/:id')
+    addProductQuantity(@Param('id') id: string, @Body() quantity: any) {
+        return this.productService.addProductQuantity(id, quantity);
     }
 }

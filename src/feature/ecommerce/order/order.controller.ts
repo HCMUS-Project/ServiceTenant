@@ -47,9 +47,16 @@ export class OrderController {
     return this.orderService.confirmOrder(id, domain);
   }
 
+  // User role 
   @Patch('cancel/:id')
   cancelOrder(@Param('id') id: string, @Headers('domain') domain: string){
     return this.orderService.cancelOrder(id, domain);
+  }
+
+  // Tenant role
+  @Patch('tenant/cancel/:id')
+  cancelOrderByTenant(@Param('id') id: string, @Headers('domain') domain: string){
+    return this.orderService.cancelOrderByTenant(id, domain);
   }
 
   @Delete(':id')

@@ -206,10 +206,10 @@ export class ProductService {
     }
 
     async searchWithFilters(
-        filters: { name?: string; category?: string; price?: number; rating?: number },
+        filters: { name?: string; category?: string; min_price?: number; max_price?: number; rating?: number },
         domain: string,
     ): Promise<any[]> {
-        const { name, category, price, rating } = filters;
+        const { name, category, min_price, max_price, rating } = filters;
 
         let productsQuery = await this.prismaService.product.findMany({
             where: {
@@ -252,13 +252,11 @@ export class ProductService {
       }
         
 
-        if (price) {
-          productsQuery = productsQuery.filter(product => {
-            const priceDiff = Math.abs(Number(product.price) - price);
-            const priceDiffPercentage = (priceDiff / price) * 100;
-            return priceDiffPercentage <= 20;
-          }
-          );
+        if (min_price) {
+          productsQuery = productsQuery.filter(product => Number(product.price) >= Number(min_price));
+        }
+        if (max_price) {
+          productsQuery = productsQuery.filter(product => Number(product.price) <= Number(max_price));
         }
 
         if (rating) {
@@ -299,21 +297,29 @@ export class ProductService {
         }
     }
 
-    // write function add quantity of product
-    async addProductQuantity(productId: string, quantity: number): Promise<void> {
+    async addProductQuantity(productId: string, quantityData: any){
         try {
-            await this.prismaService.product.update({
+            // Trích xuất giá trị quantity từ dữ liệu truyền vào
+            
+            const quantity = quantityData.quantity;
+            // Kiểm tra xem quantity có phải là một số không
+            if (typeof quantity !== 'number') {
+                throw new Error('Quantity must be a number.');
+            }
+            // Tiến hành cập nhật quantity của sản phẩm
+            const product = await this.prismaService.product.update({
                 where: {
                     id: productId,
                 },
                 data: {
                     quantity: {
-                        increment: quantity,
+                        increment: 10,
                     },
                 },
             });
+            return product;
         } catch (error) {
-            throw new Error('Failed to add product quantity. Please try again.');
+            throw new Error(error.message);
         }
     }
 
