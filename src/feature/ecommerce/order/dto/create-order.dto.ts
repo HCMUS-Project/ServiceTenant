@@ -27,6 +27,14 @@ export class CreateOrderDto {
     @ArrayMinSize(1)
     quantities: number[];
 
+    @IsString()
+    @IsNotEmpty()
+    phone: string;
+
+    @IsString()
+    @IsNotEmpty()
+    address: string;
+
     @IsUUID()
     @IsString()
     @IsOptional()

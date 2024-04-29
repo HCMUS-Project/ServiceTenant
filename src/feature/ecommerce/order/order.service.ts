@@ -21,12 +21,20 @@ export class OrderService {
         }
       }
 
+      const voucher_applied = await this.VoucherService.findOne(createOrderDto.voucher_id, createOrderDto.domain);
+      if (voucher_applied !== null) {
+        if (voucher_applied.expire_at < new Date()) {
+          throw new Error('Voucher is expired');
+        }
+      }
+      else{
+        throw new Error('Voucher is not valid');
+      }
+
       const total_price = await this.calculateTotalPrice(createOrderDto.products_id, createOrderDto.quantities);
       let price_after_voucher = total_price;
       let discount_value = 0;
       if (createOrderDto.voucher_id !== undefined) {
-        const voucher_applied = await this.VoucherService.findOne(createOrderDto.voucher_id, createOrderDto.domain);
-        
         if (total_price < Number(voucher_applied.min_app_value)) {
           throw new Error('Total price is not enough to apply this voucher');
         }
@@ -45,7 +53,7 @@ export class OrderService {
         }
       }
       
-      const order = this.prismaService.order.create({
+      const order = await this.prismaService.order.create({
         data: {
           domain: createOrderDto.domain,
           user_id: createOrderDto.user_id,
@@ -57,11 +65,20 @@ export class OrderService {
             })),
           },
           total_price: total_price,
+          phone: createOrderDto.phone,
+          address: createOrderDto.address,
           voucher_id: createOrderDto.voucher_id,
           voucher_discount: discount_value,
           price_after_voucher: price_after_voucher,
         },
+        include: {
+          orderItems: true,
+        },
       });
+
+      for (let i = 0; i < order.orderItems.length; i++) {
+        await this.ProductService.updateProductSold(order.orderItems[i].product_id, order.orderItems[i].quantity);
+      }
       return order;
     }
     catch (error) {
@@ -71,26 +88,10 @@ export class OrderService {
 
   async confirmOrder(id: string, domain: string) {
     try{
-      const order = await this.prismaService.order.findUnique({
-        where: {
-          id: id,
-          domain: domain,
-        },
-        include: {
-          orderItems: {
-            include: {
-              product: true, // Include product information
-            }
-          }
-        },
-      });
-      // update product sold and quantity
-      for (let i = 0; i < order.orderItems.length; i++) {
-        await this.ProductService.updateProductSold(order.orderItems[i].product_id, order.orderItems[i].quantity);
-      }
       const orderUpdated = this.prismaService.order.update({
         where: {
           id: id,
+          domain: domain,
         },
         data: {
           stage: "shipping",
@@ -118,6 +119,24 @@ export class OrderService {
       const orderUpdated = this.prismaService.order.update({
         where: {
           id: id,
+        },
+        data: {
+          stage: "cancelled",
+        },
+      });
+      return orderUpdated;
+    }
+    catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async cancelOrderByTenant(id: string, domain: string) {
+    try{
+      const orderUpdated = this.prismaService.order.update({
+        where: {
+          id: id,
+          domain: domain,
         },
         data: {
           stage: "cancelled",

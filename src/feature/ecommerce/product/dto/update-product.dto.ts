@@ -53,4 +53,12 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
     @IsArray()
     @ArrayMinSize(1)
     categories_id: string[];
+
+    @IsNumber()
+    @IsString()
+    min_price: number;
+
+    @IsNumber()
+    @IsString()
+    max_price: number;
 }
