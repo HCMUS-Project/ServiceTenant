@@ -51,7 +51,6 @@ export class ProductController {
     ) {
         const { name, category, price, rating } = query;
 
-        // Tạo một object để lọc những bộ lọc có giá trị
         const filters = {
             name,
             category,
@@ -59,17 +58,27 @@ export class ProductController {
             rating,
         };
 
-        // Convert filters object into an array of key-value pairs
         const entries = Object.entries(filters);
-
-        // Declare the activeFilters variable and use Object.fromEntries() to convert the entries array back into an object
         const activeFilters: { [key: string]: string | number } = Object.fromEntries(entries);
 
-        // Nếu không có bộ lọc nào được áp dụng, trả về tất cả sản phẩm
         if (Object.keys(activeFilters).length === 0) {
           return this.productService.findAll(domain);
         }
-        // Gọi phương thức searchWithFilters và truyền các bộ lọc được áp dụng
         return this.productService.searchWithFilters(activeFilters, domain);
+    }
+
+    @Post('increase-view/:id')
+    increaseView(@Param('id') id: string) {
+        return this.productService.increaseProductViews(id);
+    }
+
+    @Post('update-sold/:id')
+    updateProductSold(@Param('id') id: string, @Body() quantity: number) {
+        return this.productService.updateProductSold(id, quantity);
+    }
+
+    @Post('update-rating/:id')
+    updateProductRating(@Param('id') id: string, @Body() rating: number) {
+        return this.productService.updateProductRating(id, rating);
     }
 }

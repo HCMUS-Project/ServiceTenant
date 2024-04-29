@@ -2,22 +2,56 @@ import { Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductService } from '../product/product.service';
+import { OrderService } from '../order/order.service';
 
 @Injectable()
 export class ReviewService {
-    constructor(private prismaService: PrismaService) {}
+    constructor(private prismaService: PrismaService,
+        private productService: ProductService,
+        private orderService: OrderService,
+    ) {}
 
     async create(createReviewDto: CreateReviewDto) {
         try{
-            const review = await this.prismaService.review.create({
-                data: {
+            const userPurchased = await this.orderService.checkUserPurchase(createReviewDto.user_id, createReviewDto.domain, createReviewDto.product_id);
+            if (userPurchased === false) {
+                throw new Error('User has not purchased this product');
+            }
+            let review;
+            const reviewExists = await this.prismaService.review.findFirst({
+                where: {
                     domain: createReviewDto.domain,
                     product_id: createReviewDto.product_id,
                     user_id: createReviewDto.user_id,
-                    rating: createReviewDto.rating,
-                    review: createReviewDto.review,
                 },
             });
+            console.log(reviewExists);
+            if (reviewExists !== null) {
+                review = this.prismaService.review.update({
+                    where: {
+                        id: reviewExists.id,
+                    },
+                    data: {
+                        rating: createReviewDto.rating,
+                        review: createReviewDto.review,
+                    },
+                });
+                this.productService.updateProductRating(createReviewDto.product_id, createReviewDto.rating);
+            }
+            else{
+                review = await this.prismaService.review.create({
+                    data: {
+                        domain: createReviewDto.domain,
+                        product_id: createReviewDto.product_id,
+                        user_id: createReviewDto.user_id,
+                        rating: createReviewDto.rating,
+                        review: createReviewDto.review,
+                    },
+                });
+                this.productService.updateProductRating(createReviewDto.product_id, createReviewDto.rating);
+            }
+
             return review;
         }
         catch(error){
