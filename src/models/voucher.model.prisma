@@ -1,5 +1,6 @@
 model Voucher {
     id               String   @id @default(uuid())
+    domain           String
     voucher_name     String
     voucher_code     String
     max_discount     Decimal  @commerce_db.Decimal(19, 2)
@@ -10,6 +11,4 @@ model Voucher {
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
-    Category   Category? @relation(fields: [categoryId], references: [id])
-    categoryId String?
 }

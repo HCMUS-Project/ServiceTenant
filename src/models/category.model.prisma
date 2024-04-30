@@ -1,12 +1,13 @@
 model Category {
     id          String    @id @default(uuid())
-    name        String    @unique
+    domain      String    @default("")
+    name        String
     description String
-    domain      String
     created_at  DateTime  @default(now())
     updated_at  DateTime  @updatedAt
     deleted_at  DateTime?
 
-    vouchers        Voucher[]
     ProductCategory ProductCategory[]
+
+    @@unique([domain, name], name: "unique_category_domain_name")
 }

@@ -1,5 +1,6 @@
 model Review {
     id         String  @id @default(uuid())
+    domain     String
     product_id String
     user_id    String
     rating     Decimal @commerce_db.Decimal(19, 1)

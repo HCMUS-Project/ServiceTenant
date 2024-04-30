@@ -1,6 +1,8 @@
 syntax = "proto3";
 
 import "e_commerce/category.proto";
+import "e_commerce/product.proto";
+import "e_commerce/productCategory.proto";
 
 package main;
 

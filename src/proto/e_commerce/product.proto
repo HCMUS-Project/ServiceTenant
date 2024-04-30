@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";  // Assuming the correct path to the user_token.proto file
+
+package product;
+
+service ProductService {
+    rpc CreateProduct(CreateProductRequest) returns (ProductResponse);
+    rpc FindAllProducts(FindAllProductsRequest) returns (FindAllProductsResponse);
+    rpc FindProductById(FindProductByIdRequest) returns (ProductResponse);
+    rpc UpdateProduct(UpdateProductRequest) returns (ProductResponse);
+    rpc DeleteProduct(DeleteProductRequest) returns (ProductResponse);
+    rpc SearchProducts(SearchProductsRequest) returns (FindAllProductsResponse);
+    rpc IncreaseProductView(IncreaseProductViewRequest) returns (ProductResponse);
+    rpc AddProductQuantity(AddProductQuantityRequest) returns (ProductResponse);
+}
+
+message Category{
+    string id = 1;
+    string name = 2;
+}
+
+message CreateProductRequest {
+    userToken.User user = 1;
+    string name = 2;
+    double price = 3;
+    int32 quantity = 4;
+    string description = 5;
+    repeated string images = 6;
+    int32 views = 7;
+    double rating = 8;
+    int32 number_rating = 9;
+    int32 sold = 10;
+    repeated string categories = 11;
+}
+
+message FindAllProductsRequest {
+    userToken.User user = 1;
+}
+
+message FindProductByIdRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message UpdateProductRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string name = 3;
+    double price = 4;
+    int32 quantity = 5;
+    string description = 6;
+    repeated string images = 7;
+    int32 views = 8;
+    double rating = 9;
+    int32 number_rating = 10;
+    int32 sold = 11;
+    repeated string categories = 12;
+}
+
+message DeleteProductRequest {
+    userToken.User user = 1;
+    string id = 2;
+} 
+
+message SearchProductsRequest {
+    userToken.User user = 1;
+    string name = 2;
+    string category = 3;
+    double min_price = 4;
+    double max_price = 5;
+    double rating = 6;
+    int32 sold = 7;
+}
+
+message IncreaseProductViewRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message AddProductQuantityRequest {
+    userToken.User user = 1;
+    string id = 2;
+    int32 quantity = 3;
+}
+
+message ProductResponse {
+    string id = 1;
+    string domain = 2;
+    string name = 3;
+    double price = 4;
+    int32 quantity = 5;
+    string tenant_id = 6;
+    string description = 7;
+    repeated string images = 8;
+    int32 views = 9;
+    double rating = 10;
+    int32 number_rating = 11;
+    int32 sold = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string deleted_at = 15;
+    repeated Category categories = 16;
+}
+
+message FindAllProductsResponse {
+    repeated ProductResponse products = 1;
+}
