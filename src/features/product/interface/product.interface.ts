@@ -1,10 +1,12 @@
 import {
+    AddProductQuantityRequest,
     Category,
     CreateProductRequest,
     DeleteProductRequest,
     FindAllProductsRequest,
     FindAllProductsResponse,
     FindProductByIdRequest,
+    IncreaseProductViewRequest,
     ProductResponse,
     SearchProductsRequest,
     UpdateProductRequest,
@@ -44,5 +46,10 @@ export interface IDeleteProductRequest extends DeleteProductRequest.AsObject{}
 export interface IDeleteProductResponse extends IProductResponse{}
 
 export interface ISearchProductsRequest extends SearchProductsRequest.AsObject{}
-
 export interface ISearchProductsResponse extends IFindAllProductsResponse{}
+
+export interface IIncreaseProductViewRequest extends IncreaseProductViewRequest.AsObject{}
+export interface IIncreaseProductViewResponse extends IProductResponse{}
+
+export interface IAddProductQuantityRequest extends AddProductQuantityRequest.AsObject{}
+export interface IAddProductQuantityResponse extends IProductResponse{}

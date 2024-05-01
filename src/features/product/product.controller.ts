@@ -2,6 +2,8 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod, MessagePattern, Payload } from '@nestjs/microservices';
 import { ProductService } from './product.service';
 import {
+  IAddProductQuantityRequest,
+    IAddProductQuantityResponse,
     ICreateProductRequest,
     ICreateProductResponse,
     IDeleteProductRequest,
@@ -10,6 +12,8 @@ import {
     IFindAllProductsResponse,
     IFindProductByIdRequest,
     IFindProductByIdResponse,
+    IIncreaseProductViewRequest,
+    IIncreaseProductViewResponse,
     IProductResponse,
     ISearchProductsRequest,
     ISearchProductsResponse,
@@ -49,22 +53,25 @@ export class ProductController {
 
     @GrpcMethod('ProductService', 'SearchProducts')
     async search(data: ISearchProductsRequest): Promise<ISearchProductsResponse> {
-        const { user, ...dataSearch } = data; 
-
-        // const filters = {
-        //     name,
-        //     category,
-        //     min_price: min_price,
-        //     max_price: max_price,
-        //     rating,
-        // };
+        const { user, ...dataSearch } = data;  
 
         const entries = Object.entries(dataSearch);
         const activeFilters: { [key: string]: string | number } = Object.fromEntries(entries);
 
         if (Object.keys(activeFilters).length === 0) {
+          console.log('find all')
             return await this.productService.findAll({user: user}) 
         }
         return await this.productService.searchWithFilters(data);
+    }
+
+    @GrpcMethod('ProductService', 'IncreaseProductView')
+    async increaseView(data: IIncreaseProductViewRequest): Promise<IIncreaseProductViewResponse> {
+        return await this.productService.increaseView(data);
+    }
+
+    @GrpcMethod('ProductService', 'AddProductQuantity')
+    async addQuantity(data: IAddProductQuantityRequest): Promise<IAddProductQuantityResponse> {
+        return await this.productService.addQuantity(data);
     }
 }

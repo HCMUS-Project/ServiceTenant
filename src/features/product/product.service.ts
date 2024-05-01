@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import {
+    IAddProductQuantityRequest,
+    IAddProductQuantityResponse,
     ICategory,
     ICreateProductRequest,
     ICreateProductResponse,
@@ -10,6 +12,8 @@ import {
     IFindAllProductsResponse,
     IFindProductByIdRequest,
     IFindProductByIdResponse,
+    IIncreaseProductViewRequest,
+    IIncreaseProductViewResponse,
     IProductResponse,
     ISearchProductsRequest,
     ISearchProductsResponse,
@@ -380,6 +384,9 @@ export class ProductService {
             where: {
                 domain: user.domain,
             },
+            include: {
+                categories: true, // Include categories
+            },
         });
 
         // Apply filters if any
@@ -400,7 +407,7 @@ export class ProductService {
                 // Get list of productIds from ProductCategory table
                 const productIds = await this.prismaService.productCategory.findMany({
                     where: {
-                        categoryId: categoryId,
+                        categoryId: categoryId.id,
                     },
                     select: {
                         productId: true,
@@ -419,26 +426,166 @@ export class ProductService {
                             in: validProductIds,
                         },
                     },
+                    include: {
+                        categories: true, // Include categories
+                    },
                 });
             }
         }
 
-        if (min_price) {
+        if (filters.minPrice) {
             productsQuery = productsQuery.filter(
-                product => Number(product.price) >= Number(min_price),
+                product => Number(product.price) >= Number(filters.minPrice),
             );
         }
-        if (max_price) {
+        if (filters.maxPrice) {
             productsQuery = productsQuery.filter(
-                product => Number(product.price) <= Number(max_price),
+                product => Number(product.price) <= Number(filters.maxPrice),
             );
         }
 
-        if (rating) {
-            productsQuery = productsQuery.filter(product => Number(product.rating) >= rating);
+        if (filters.rating) {
+            productsQuery = productsQuery.filter(product => Number(product.rating) >= filters.rating);
         }
 
         // Return the result
-        return productsQuery;
+        return {
+            products: productsQuery.map(product => ({
+                ...product,
+                tenantId: product.tenant_id,
+                numberRating: product.number_rating,
+                price: Number(product.price),
+                rating: Number(product.rating),
+                createdAt: product.created_at.toString(),
+                updatedAt: product.updated_at.toString(),
+                deletedAt: product.deleted_at ? product.deleted_at.toString() : null,
+                categories: product.categories.map(cateogry => ({
+                    id: cateogry.categoryId,
+                    name: cateogry.name,
+                })),
+            })),
+        };
+    }
+
+    async increaseView(data: IIncreaseProductViewRequest): Promise<IIncreaseProductViewResponse> {
+        const { user, id } = data;
+
+        // // check role of user
+        // if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
+        //     throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
+        // }
+
+        try {
+            // find the product first
+            const product = await this.prismaService.product.findUnique({
+                where: { id: id, domain: user.domain },
+            });
+
+            // if the product does not exist, throw an error
+            if (!product) {
+                throw new GrpcItemNotFoundException('Product');
+            }
+
+            // update product by id and domain in incresea view
+            const newProduct = await this.prismaService.product.update({
+                where: { id, domain: user.domain },
+                data:{
+                    views:{
+                        increment:1
+                    }
+                },
+                include: {
+                    categories: {
+                        select: {
+                            categoryId: true,
+                            name: true,
+                        },
+                    },
+                },
+            });
+
+            // check if product not exists
+            if (!newProduct) {
+                throw new GrpcItemNotFoundException('Product');
+            }
+
+            return {
+                ...newProduct,
+                tenantId: newProduct.tenant_id,
+                numberRating: newProduct.number_rating,
+                price: Number(newProduct.price),
+                rating: Number(newProduct.rating),
+                createdAt: newProduct.created_at.toString(),
+                updatedAt: newProduct.updated_at.toString(),
+                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toString() : null,
+                categories: newProduct.categories.map(category => ({
+                    id: category.categoryId,
+                    name: category.name,
+                })),
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async addQuantity(data: IAddProductQuantityRequest): Promise<IAddProductQuantityResponse> {
+        const { user, id, quantity } = data;
+
+        // // check role of user
+        // if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
+        //     throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
+        // }
+
+        try {
+            // find the product first
+            const product = await this.prismaService.product.findUnique({
+                where: { id: id, domain: user.domain },
+            });
+
+            // if the product does not exist, throw an error
+            if (!product) {
+                throw new GrpcItemNotFoundException('Product');
+            }
+
+            // update product by id and domain in add quantity
+            const newProduct = await this.prismaService.product.update({
+                where: { id, domain: user.domain },
+                data:{
+                    quantity:{
+                        increment:quantity
+                    }
+                },
+                include: {
+                    categories: {
+                        select: {
+                            categoryId: true,
+                            name: true,
+                        },
+                    },
+                },
+            });
+
+            // check if product not exists
+            if (!newProduct) {
+                throw new GrpcItemNotFoundException('Product');
+            }
+
+            return {
+                ...newProduct,
+                tenantId: newProduct.tenant_id,
+                numberRating: newProduct.number_rating,
+                price: Number(newProduct.price),
+                rating: Number(newProduct.rating),
+                createdAt: newProduct.created_at.toString(),
+                updatedAt: newProduct.updated_at.toString(),
+                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toString() : null,
+                categories: newProduct.categories.map(category => ({
+                    id: category.categoryId,
+                    name: category.name,
+                })),
+            };
+        } catch (error) {
+            throw error;
+        }
     }
 }
