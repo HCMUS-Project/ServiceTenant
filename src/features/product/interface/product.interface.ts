@@ -33,23 +33,24 @@ export interface IFindAllProductsResponse
     products: IProductResponse[];
 }
 
-export interface IFindProductByIdRequest extends FindProductByIdRequest.AsObject{}
-export interface IFindProductByIdResponse extends IProductResponse{}
+export interface IFindProductByIdRequest extends FindProductByIdRequest.AsObject {}
+export interface IFindProductByIdResponse extends IProductResponse {}
 
-export interface IUpdateProductRequest extends Omit<UpdateProductRequest.AsObject, 'imagesList' | 'categoriesList'> {
+export interface IUpdateProductRequest
+    extends Omit<UpdateProductRequest.AsObject, 'imagesList' | 'categoriesList'> {
     images: string[];
     categories: string[];
 }
-export interface IUpdateProductResponse extends IProductResponse{}
+export interface IUpdateProductResponse extends IProductResponse {}
 
-export interface IDeleteProductRequest extends DeleteProductRequest.AsObject{}
-export interface IDeleteProductResponse extends IProductResponse{}
+export interface IDeleteProductRequest extends DeleteProductRequest.AsObject {}
+export interface IDeleteProductResponse extends IProductResponse {}
 
-export interface ISearchProductsRequest extends SearchProductsRequest.AsObject{}
-export interface ISearchProductsResponse extends IFindAllProductsResponse{}
+export interface ISearchProductsRequest extends SearchProductsRequest.AsObject {}
+export interface ISearchProductsResponse extends IFindAllProductsResponse {}
 
-export interface IIncreaseProductViewRequest extends IncreaseProductViewRequest.AsObject{}
-export interface IIncreaseProductViewResponse extends IProductResponse{}
+export interface IIncreaseProductViewRequest extends IncreaseProductViewRequest.AsObject {}
+export interface IIncreaseProductViewResponse extends IProductResponse {}
 
-export interface IAddProductQuantityRequest extends AddProductQuantityRequest.AsObject{}
-export interface IAddProductQuantityResponse extends IProductResponse{}
+export interface IAddProductQuantityRequest extends AddProductQuantityRequest.AsObject {}
+export interface IAddProductQuantityResponse extends IProductResponse {}

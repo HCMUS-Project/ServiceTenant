@@ -27,7 +27,7 @@ import { GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
 import { SupabaseService } from 'src/util/supabase/supabase.service';
 import { ProductCategory } from 'src/proto_build/e_commerce/productCategory_pb';
 import { Prisma } from '@prisma/client';
-import {filter} from 'rxjs';
+import { filter } from 'rxjs';
 
 @Injectable()
 export class ProductService {
@@ -378,7 +378,7 @@ export class ProductService {
     }
 
     async searchWithFilters(data: ISearchProductsRequest): Promise<ISearchProductsResponse> {
-        const { user, ...filters} = data;
+        const { user, ...filters } = data;
 
         let productsQuery = await this.prismaService.product.findMany({
             where: {
@@ -395,14 +395,14 @@ export class ProductService {
         }
 
         if (filters.category) {
-            const categoryId =  await this.prismaService.category.findFirst({
+            const categoryId = await this.prismaService.category.findFirst({
                 where: {
-                  name: filters.category,
+                    name: filters.category,
                 },
                 select: {
-                  id: true,
+                    id: true,
                 },
-              });
+            });
             if (categoryId) {
                 // Get list of productIds from ProductCategory table
                 const productIds = await this.prismaService.productCategory.findMany({
@@ -445,7 +445,9 @@ export class ProductService {
         }
 
         if (filters.rating) {
-            productsQuery = productsQuery.filter(product => Number(product.rating) >= filters.rating);
+            productsQuery = productsQuery.filter(
+                product => Number(product.rating) >= filters.rating,
+            );
         }
 
         // Return the result
@@ -489,10 +491,10 @@ export class ProductService {
             // update product by id and domain in incresea view
             const newProduct = await this.prismaService.product.update({
                 where: { id, domain: user.domain },
-                data:{
-                    views:{
-                        increment:1
-                    }
+                data: {
+                    views: {
+                        increment: 1,
+                    },
                 },
                 include: {
                     categories: {
@@ -550,10 +552,10 @@ export class ProductService {
             // update product by id and domain in add quantity
             const newProduct = await this.prismaService.product.update({
                 where: { id, domain: user.domain },
-                data:{
-                    quantity:{
-                        increment:quantity
-                    }
+                data: {
+                    quantity: {
+                        increment: quantity,
+                    },
                 },
                 include: {
                     categories: {

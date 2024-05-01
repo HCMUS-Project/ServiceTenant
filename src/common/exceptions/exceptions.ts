@@ -10,7 +10,7 @@ class GrpcItemNotFoundException extends RpcException {
         this.message = JSON.stringify({
             error: this.message,
             type: 'string',
-            exceptionName: 'RpcException'
+            exceptionName: 'RpcException',
         });
     }
 }

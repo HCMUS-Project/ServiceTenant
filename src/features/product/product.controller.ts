@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod, MessagePattern, Payload } from '@nestjs/microservices';
 import { ProductService } from './product.service';
 import {
-  IAddProductQuantityRequest,
+    IAddProductQuantityRequest,
     IAddProductQuantityResponse,
     ICreateProductRequest,
     ICreateProductResponse,
@@ -53,14 +53,14 @@ export class ProductController {
 
     @GrpcMethod('ProductService', 'SearchProducts')
     async search(data: ISearchProductsRequest): Promise<ISearchProductsResponse> {
-        const { user, ...dataSearch } = data;  
+        const { user, ...dataSearch } = data;
 
         const entries = Object.entries(dataSearch);
         const activeFilters: { [key: string]: string | number } = Object.fromEntries(entries);
 
         if (Object.keys(activeFilters).length === 0) {
-          console.log('find all')
-            return await this.productService.findAll({user: user}) 
+            console.log('find all');
+            return await this.productService.findAll({ user: user });
         }
         return await this.productService.searchWithFilters(data);
     }
