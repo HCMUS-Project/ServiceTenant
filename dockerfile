@@ -16,7 +16,6 @@ RUN yarn gen:proto
 
 # Wait for PostgreSQL to be up before running migrations
 RUN chmod +x wait-for-it.sh
-RUN ./wait-for-it.sh localhost:5433 --timeout=30 --strict -- echo "Postgres is up"
 RUN ./wait-for-it.sh postgres:5433 --timeout=30 --strict -- echo "Postgres is up"
 
 # Migrate db
