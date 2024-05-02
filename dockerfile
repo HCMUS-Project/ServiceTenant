@@ -11,8 +11,8 @@ COPY . .
 RUN yarn install
 
 # Gen proto
-# RUN yarn gen:proto_folder
-# RUN yarn gen:proto
+RUN yarn gen:proto_folder
+RUN yarn gen:proto
 
 # # Migrate db
 # RUN migrate_name="merge_db_from_new_pull" yarn migrate 

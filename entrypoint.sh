@@ -13,5 +13,7 @@ yarn migrate
 # Generate additional necessary files
 yarn generate
 
+yarn build
+
 # Start the main process.
 exec "$@"
