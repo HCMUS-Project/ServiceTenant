@@ -9,4 +9,8 @@ export class PrismaService extends PrismaClient {
             datasourceUrl: config.get('postgresUri'),
         });
     }
+    async onModuleInit() {
+        await this.$connect();
+        console.log('Prisma connected to database!');
+    }
 }
