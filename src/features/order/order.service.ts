@@ -102,6 +102,8 @@ export class OrderService {
                 });
             }
 
+            // Update cart
+
             return order;
         } catch (error) {
             throw error;

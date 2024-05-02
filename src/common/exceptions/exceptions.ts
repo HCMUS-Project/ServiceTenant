@@ -4,8 +4,10 @@
  */
 import { RpcException } from '@nestjs/microservices';
 
-declare class GrpcItemNotFoundException extends RpcException {
-    constructor(error: string | object);
+class GrpcItemNotFoundException extends RpcException {
+    constructor(error: string | object) {
+        super(error);
+    }
 }
 
 export { GrpcItemNotFoundException };
