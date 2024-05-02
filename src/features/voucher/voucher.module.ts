@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { VoucherService } from './voucher.service';
 import { VoucherController } from './voucher.controller';
-import {PrismaModule} from 'src/core/prisma/prisma.module';
+import { PrismaModule } from 'src/core/prisma/prisma.module';
 
 @Module({
-    imports:[PrismaModule],
+    imports: [PrismaModule],
     controllers: [VoucherController],
     providers: [VoucherService],
 })

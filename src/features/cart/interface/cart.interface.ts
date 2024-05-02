@@ -17,7 +17,7 @@ export interface ICart extends Omit<Cart.AsObject, 'cartItemsList'> {
 }
 
 // export interface ICartResponse extends CartResponse.AsObject{}
-export interface ICartResponse{
+export interface ICartResponse {
     cart?: ICart;
 }
 
@@ -31,13 +31,13 @@ export interface IFindAllCartsByUserIdResponse {
     carts: ICart[];
 }
 
-export interface IFindCartByIdRequest extends FindCartByIdRequest.AsObject{}
-export interface IFindCartByIdResponse extends ICartResponse{}
+export interface IFindCartByIdRequest extends FindCartByIdRequest.AsObject {}
+export interface IFindCartByIdResponse extends ICartResponse {}
 
 export interface IUpdateCartRequest extends Omit<UpdateCartRequest.AsObject, 'cartItemsList'> {
     cartItems: ICartItem[];
 }
-export interface IUpdateCartResponse extends ICartResponse{}
+export interface IUpdateCartResponse extends ICartResponse {}
 
-export interface IDeleteCartRequest extends DeleteCartRequest.AsObject{}
-export interface IDeleteCartResponse extends ICartResponse{}
+export interface IDeleteCartRequest extends DeleteCartRequest.AsObject {}
+export interface IDeleteCartResponse extends ICartResponse {}

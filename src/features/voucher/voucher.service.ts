@@ -235,7 +235,9 @@ export class VoucherService {
             throw error;
         }
     }
-    async findVoucherByCode(data: ICheckVoucherByCodeRequest): Promise<ICheckVoucherByCodeResponse> {
+    async findVoucherByCode(
+        data: ICheckVoucherByCodeRequest,
+    ): Promise<ICheckVoucherByCodeResponse> {
         const { user, code } = data;
         try {
             // find voucher by id and domain

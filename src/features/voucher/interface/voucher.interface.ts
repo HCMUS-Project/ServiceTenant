@@ -27,11 +27,11 @@ export interface IFindAllVouchersResponse
 export interface IFindVoucherByIdRequest extends FindVoucherByIdRequest.AsObject {}
 export interface IFindVoucherByIdResponse extends IVoucherResponse {}
 
-export interface IUpdateVoucherRequest extends UpdateVoucherRequest.AsObject{}
+export interface IUpdateVoucherRequest extends UpdateVoucherRequest.AsObject {}
 export interface IUpdateVoucherResponse extends IVoucherResponse {}
 
-export interface IDeleteVoucherRequest extends DeleteVoucherRequest.AsObject{}
-export interface IDeleteVoucherResponse extends IVoucherResponse{}
+export interface IDeleteVoucherRequest extends DeleteVoucherRequest.AsObject {}
+export interface IDeleteVoucherResponse extends IVoucherResponse {}
 
-export interface ICheckVoucherByCodeRequest extends CheckVoucherByCodeRequest.AsObject{}
-export interface ICheckVoucherByCodeResponse extends IVoucherResponse{}
+export interface ICheckVoucherByCodeRequest extends CheckVoucherByCodeRequest.AsObject {}
+export interface ICheckVoucherByCodeResponse extends IVoucherResponse {}

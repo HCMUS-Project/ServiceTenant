@@ -258,71 +258,71 @@ export class CartService {
             });
 
             return {
-              cart: {
-                ...updatedCart,
-                id: updatedCart.id,
-                userId: updatedCart.user_id,
-                cartItems: updatedCart.cartItems.map(cartItem => ({
-                    ...cartItem,
-                    productId: cartItem.product_id,
-                })),
-                totalPrice: Number(updatedCart.total_price),
-                createdAt: updatedCart.created_at.toString(),
-                updatedAt: updatedCart.updated_at.toString(),
-                deletedAt: updatedCart.deleted_at ? updatedCart.deleted_at.toString() : null,
-            },
-            }
+                cart: {
+                    ...updatedCart,
+                    id: updatedCart.id,
+                    userId: updatedCart.user_id,
+                    cartItems: updatedCart.cartItems.map(cartItem => ({
+                        ...cartItem,
+                        productId: cartItem.product_id,
+                    })),
+                    totalPrice: Number(updatedCart.total_price),
+                    createdAt: updatedCart.created_at.toString(),
+                    updatedAt: updatedCart.updated_at.toString(),
+                    deletedAt: updatedCart.deleted_at ? updatedCart.deleted_at.toString() : null,
+                },
+            };
         } catch (error) {
             throw new Error(error.message);
         }
     }
 
     async deleteCart(data: IDeleteCartRequest): Promise<IDeleteCartResponse> {
-      const { user, id } = data;
-      try {
-          // find cart by id 
-          const cart = await this.prismaService.cart.findUnique({
-              where: {
-                  id
-              },
-          });
+        const { user, id } = data;
+        try {
+            // find cart by id
+            const cart = await this.prismaService.cart.findUnique({
+                where: {
+                    id,
+                },
+            });
 
-          // check if cart not exists
-          if (!cart) {
-              throw new GrpcItemNotFoundException('Cart');
-          }
+            // check if cart not exists
+            if (!cart) {
+                throw new GrpcItemNotFoundException('Cart');
+            }
 
-          const deleteCart = await this.prismaService.cart.delete({
-            where: {
-                id: id,
-            },
-            include: {
-              cartItems: {
-                  select: {
-                      product_id: true,
-                      quantity: true,
-                  },
-              },
-          },
-        });
+            const deleteCart = await this.prismaService.cart.delete({
+                where: {
+                    id: id,
+                },
+                include: {
+                    cartItems: {
+                        select: {
+                            product_id: true,
+                            quantity: true,
+                        },
+                    },
+                },
+            });
 
-          return {
-              cart: {
-                  ...deleteCart,
-                  id: deleteCart.id,
-                  userId: deleteCart.user_id,
-                  cartItems: deleteCart.cartItems.map(cartItem => ({
-                      ...cartItem,
-                      productId: cartItem.product_id,
-                  })),
-                  totalPrice: Number(deleteCart.total_price),
-                  createdAt: deleteCart.created_at.toString(),
-                  updatedAt: deleteCart.updated_at.toString(),
-                  deletedAt: deleteCart.deleted_at ? deleteCart.deleted_at.toString() : null,
-              },
-          };
-      } catch (error) {
-          throw error;
-      }
-  }
+            return {
+                cart: {
+                    ...deleteCart,
+                    id: deleteCart.id,
+                    userId: deleteCart.user_id,
+                    cartItems: deleteCart.cartItems.map(cartItem => ({
+                        ...cartItem,
+                        productId: cartItem.product_id,
+                    })),
+                    totalPrice: Number(deleteCart.total_price),
+                    createdAt: deleteCart.created_at.toString(),
+                    updatedAt: deleteCart.updated_at.toString(),
+                    deletedAt: deleteCart.deleted_at ? deleteCart.deleted_at.toString() : null,
+                },
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
 }

@@ -1,8 +1,20 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, MessagePattern, Payload } from '@nestjs/microservices';
 import { VoucherService } from './voucher.service';
-import {ICheckVoucherByCodeRequest, ICheckVoucherByCodeResponse, ICreateVoucherRequest, ICreateVoucherResponse, IDeleteVoucherResponse, IFindAllVouchersRequest, IFindAllVouchersResponse, IFindVoucherByIdRequest, IFindVoucherByIdResponse, IUpdateVoucherRequest, IUpdateVoucherResponse} from './interface/voucher.interface';
-import {IDeleteProductRequest} from '../product/interface/product.interface';
+import {
+    ICheckVoucherByCodeRequest,
+    ICheckVoucherByCodeResponse,
+    ICreateVoucherRequest,
+    ICreateVoucherResponse,
+    IDeleteVoucherResponse,
+    IFindAllVouchersRequest,
+    IFindAllVouchersResponse,
+    IFindVoucherByIdRequest,
+    IFindVoucherByIdResponse,
+    IUpdateVoucherRequest,
+    IUpdateVoucherResponse,
+} from './interface/voucher.interface';
+import { IDeleteProductRequest } from '../product/interface/product.interface';
 
 @Controller()
 export class VoucherController {
@@ -34,7 +46,9 @@ export class VoucherController {
     }
 
     @GrpcMethod('VoucherService', 'CheckVoucherByCode')
-    async findVoucherByCode(data: ICheckVoucherByCodeRequest): Promise<ICheckVoucherByCodeResponse> {
+    async findVoucherByCode(
+        data: ICheckVoucherByCodeRequest,
+    ): Promise<ICheckVoucherByCodeResponse> {
         return await this.voucherService.findVoucherByCode(data);
     }
 }
