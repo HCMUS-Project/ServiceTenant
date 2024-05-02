@@ -16,7 +16,7 @@ async function bootstrap() {
         bufferLogs: true,
         options: {
             package: [
-                'main',
+                'ecommerce',
                 'userToken',
                 'category',
                 'product',
