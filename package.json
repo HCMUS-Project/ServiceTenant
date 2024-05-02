@@ -24,7 +24,7 @@
         "generate-schema": "cat src/core/prisma/*.prisma src/*/*.prisma > prisma/schema.prisma",
         "migrate": "npm run generate-schema && prisma migrate dev --preview-feature --name $migrate_name",
         "generate": "prisma generate",
-        "wait-for-it": "wait-for-it.sh"
+        "wait-for-it": "./wait-for-it.sh"
     },
     "dependencies": {
         "@grpc/grpc-js": "^1.10.6",
