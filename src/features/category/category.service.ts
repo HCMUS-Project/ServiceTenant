@@ -9,7 +9,7 @@ import {
     IUpdateCategoryRequest,
     IUpdateCategoryResponse,
 } from './interface/category.interface';
-import { GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
+import { GrpcAlreadyExistsException, GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
 import { GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
 import { Role } from 'src/proto_build/auth/user_token_pb';
 import * as _ from 'lodash';
@@ -33,7 +33,7 @@ export class CategoryService {
                     where: { name: data.name, domain: user.domain },
                 })
             ) {
-                throw new GrpcItemNotFoundException('CATEGORY_ALREADY_EXISTS');
+                throw new GrpcAlreadyExistsException('CATEGORY_ALREADY_EXISTS');
             }
 
             // create category

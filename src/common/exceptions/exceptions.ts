@@ -3,8 +3,9 @@
  * Extends the HttpException class from the '@nestjs/microservices' module.
  */
 import { RpcException } from '@nestjs/microservices';
+import {GrpcAbortedException} from 'nestjs-grpc-exceptions';
 
-class GrpcItemNotFoundException extends RpcException {
+class GrpcItemNotFoundException extends GrpcAbortedException {
     constructor(itemName: string) {
         super(`${itemName}`);
         this.message = JSON.stringify({
@@ -15,7 +16,7 @@ class GrpcItemNotFoundException extends RpcException {
     }
 }
 
-class GrpcItemExitException extends RpcException {
+class GrpcItemExitException extends GrpcAbortedException {
     constructor(itemName: string) {
         super(`${itemName}`);
         this.message = JSON.stringify({
@@ -26,7 +27,7 @@ class GrpcItemExitException extends RpcException {
     }
 }
 
-class GrpcInvalidArgumentException extends RpcException {
+class GrpcInvalidArgumentException extends GrpcAbortedException {
     constructor(error: string | object) {
         super(`${error}`);
         this.message = JSON.stringify({
