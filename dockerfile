@@ -14,6 +14,9 @@ RUN yarn install
 RUN yarn gen:proto_folder
 RUN yarn gen:proto
 
+# Wait for PostgreSQL to be up before running migrations
+RUN yarn wait-for-it postgres-container:5433 --timeout=0 --strict -- echo "Postgres is up"
+
 # Migrate db
 RUN migrate_name="merge_db_from_new_pull" yarn migrate 
 RUN yarn generate
