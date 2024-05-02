@@ -16,8 +16,8 @@ RUN yarn gen:proto
 
 
 # Migrate db
-RUN migrate_name="merge_db_from_new_pull" yarn migrate 
-RUN yarn generate
+# RUN migrate_name="merge_db_from_new_pull" yarn migrate 
+# RUN yarn generate
 
 # Creates a "dist" folder with the production build
 RUN yarn build
