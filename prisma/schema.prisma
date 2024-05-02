@@ -14,14 +14,14 @@ datasource commerce_db {
 }model Cart {
     id          String     @id @default(uuid())
     domain      String
-    user_id     String
+    user        String
     cartItems   CartItem[]
     total_price Decimal    @commerce_db.Decimal(19, 2)
     created_at  DateTime   @default(now())
     updated_at  DateTime   @updatedAt
     deleted_at  DateTime?
 
-    @@unique([domain, user_id], name: "unique_cart_domain_user_id")
+    @@unique([domain, user], name: "unique_cart_domain_user_id")
 }
 model CartItem {
     id         String  @id @default(uuid()) 
@@ -49,7 +49,7 @@ model Category {
 model Order {
     id          String      @id @default(uuid())
     domain      String
-    user_id     String
+    user        String
     orderItems  OrderItem[]
     total_price Decimal     @commerce_db.Decimal(19, 2)
     stage       String
@@ -90,7 +90,7 @@ model Product {
     number_rating Int       @default(0)
     sold          Int       @default(0)
     created_at    DateTime  @default(now())
-    updated_at    DateTime  @updatedAt  
+    updated_at    DateTime  @updatedAt
     deleted_at    DateTime?
 
     reviews    Review[]
@@ -117,7 +117,7 @@ model Review {
     id         String  @id @default(uuid())
     domain     String
     product_id String
-    user_id    String
+    user       String
     rating     Decimal @commerce_db.Decimal(19, 1)
     review     String
 

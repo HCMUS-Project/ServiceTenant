@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package order;
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+//   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+//   rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+}
+
+message CreateOrderRequest{
+    userToken.User user = 1; 
+    string domain = 2;
+    repeated string products_id = 3;
+    repeated int32 quantities = 4;
+    string phone = 5;
+    string address = 6;
+    string voucher_id = 7;
+}
+
+message CreateOrderResponse{
+    string order_id = 1;
+}
+
+message GetOrderRequest{
+    string order_id = 1;
+}
+

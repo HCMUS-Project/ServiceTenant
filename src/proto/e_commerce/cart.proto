@@ -19,7 +19,6 @@ message CartItem {
 
 message Cart {
     string id = 1;
-    string user_id = 2;
     repeated CartItem cart_items = 3;
     double total_price = 4;
     string created_at = 5;

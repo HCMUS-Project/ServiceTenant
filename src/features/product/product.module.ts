@@ -8,5 +8,6 @@ import { SupabaseService } from 'src/util/supabase/supabase.service';
     imports: [PrismaModule],
     controllers: [ProductController],
     providers: [ProductService, SupabaseService],
+    exports: [ProductService],
 })
 export class ProductModule {}

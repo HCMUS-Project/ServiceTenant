@@ -1,7 +1,7 @@
 model Order {
     id          String      @id @default(uuid())
     domain      String
-    user_id     String
+    user        String
     orderItems  OrderItem[]
     total_price Decimal     @commerce_db.Decimal(19, 2)
     stage       String

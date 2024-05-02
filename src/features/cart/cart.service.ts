@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import {
     ICartItem,
-    ICartResponse,
     ICreateCartRequest,
     ICreateCartResponse,
     IDeleteCartRequest,
@@ -22,11 +21,7 @@ import {
     GrpcPermissionDeniedException,
 } from 'nestjs-grpc-exceptions';
 import { ProductService } from '../product/product.service';
-import { IFindProductByIdRequest } from '../product/interface/product.interface';
-import {
-    IFindAllVouchersRequest,
-    IFindAllVouchersResponse,
-} from '../voucher/interface/voucher.interface';
+
 import { GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
 
 @Injectable()
@@ -38,19 +33,18 @@ export class CartService {
 
     async calculateTotalPrice(cartItems: ICartItem[]): Promise<number> {
         try {
-            // Khởi tạo tổng giá là 0
             let totalPrice: number = 0;
 
-            // Duyệt qua từng productId và tính giá cho từng sản phẩm
+            // loop through all cart items
             for (let i = 0; i < cartItems.length; i++) {
-                // Lấy giá của sản phẩm từ productService
+                // find product by id
                 const product = await this.prismaService.product.findUnique({
                     where: {
                         id: cartItems[i].productId,
                     },
                 });
 
-                // Tính tổng giá dựa trên giá của sản phẩm và số lượng
+                // calculate total price
                 totalPrice = Number(totalPrice) + Number(product.price) * cartItems[i].quantity;
             }
 
@@ -61,14 +55,12 @@ export class CartService {
     }
 
     async create(dataRequest: ICreateCartRequest): Promise<ICreateCartResponse> {
-        const { user, userId, cartItems } = dataRequest;
-        // console.log(data)
+        const { user, cartItems } = dataRequest;
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
         }
         try {
-            // console.log(cartItemsList)
             // Check quantities of product have to be greater than quantity of product database
             for (let i = 0; i < cartItems.length; i++) {
                 const product = await this.productService.findOneById({
@@ -83,33 +75,30 @@ export class CartService {
             const cartExists = await this.prismaService.cart.findFirst({
                 where: {
                     domain: user.domain,
-                    user_id: userId,
+                    user: user.email,
                 },
             });
 
-            // console.log(cartExists)
-
-            // Nếu giỏ hàng đã tồn tại, trả về thông báo lỗi
+            // Check if cart already exists
             if (cartExists !== null) {
                 throw new GrpcAlreadyExistsException('Cart already exists');
             }
 
-            // Tạo giỏ hàng mới
+            // Create cart
             const cart = await this.prismaService.cart.create({
                 data: {
                     domain: user.domain,
-                    user_id: userId,
+                    user: user.email,
                     total_price: await this.calculateTotalPrice(cartItems),
-                    // Tạo các mục giỏ hàng từ dữ liệu DTO
                     cartItems: {
                         create: cartItems.map(cartItem => ({
-                            product: { connect: { id: cartItem.productId } }, // Kết nối với sản phẩm đã tồn tại trong hệ thống
-                            quantity: cartItem.quantity, // Số lượng của sản phẩm
+                            product: { connect: { id: cartItem.productId } },
+                            quantity: cartItem.quantity,
                         })),
                     },
                 },
                 include: {
-                    cartItems: true, // Bao gồm cả thông tin về các mục giỏ hàng được tạo
+                    cartItems: true,
                 },
             });
 
@@ -117,7 +106,6 @@ export class CartService {
                 cart: {
                     ...cart,
                     id: cart.id,
-                    userId: cart.user_id,
                     cartItems: cart.cartItems.map(cartItem => ({
                         ...cartItem,
                         productId: cartItem.product_id,
@@ -127,7 +115,7 @@ export class CartService {
                     updatedAt: cart.updated_at.toString(),
                     deletedAt: cart.deleted_at ? cart.deleted_at.toString() : null,
                 },
-            }; // Trả về giỏ hàng đã được tạo
+            };
         } catch (error) {
             throw new Error(error.message);
         }
@@ -137,7 +125,7 @@ export class CartService {
         try {
             // find all carts by domain and id
             const carts = await this.prismaService.cart.findMany({
-                where: { domain: data.user.domain, user_id: data.userId },
+                where: { domain: data.user.domain, user: data.user.email },
                 include: {
                     cartItems: {
                         select: {
@@ -147,7 +135,6 @@ export class CartService {
                     },
                 },
             });
-            // console.log(carts)
 
             if (carts.length == 0) {
                 throw new GrpcItemNotFoundException('Cart');
@@ -157,7 +144,7 @@ export class CartService {
                 carts: carts.map(cart => ({
                     ...cart,
                     id: cart.id,
-                    userId: cart.user_id,
+                    userId: cart.user,
                     cartItems: cart.cartItems.map(cartItem => ({
                         ...cartItem,
                         productId: cartItem.product_id,
@@ -174,13 +161,13 @@ export class CartService {
     }
 
     async findCartById(data: IFindCartByIdRequest): Promise<IFindCartByIdResponse> {
-        const { user, userId } = data;
+        const { user } = data;
         try {
             // find cart by id and domain
             const cart = await this.prismaService.cart.findUnique({
                 where: {
                     unique_cart_domain_user_id: {
-                        user_id: userId,
+                        user: user.email,
                         domain: user.domain,
                     },
                 },
@@ -202,7 +189,6 @@ export class CartService {
                 cart: {
                     ...cart,
                     id: cart.id,
-                    userId: cart.user_id,
                     cartItems: cart.cartItems.map(cartItem => ({
                         ...cartItem,
                         productId: cartItem.product_id,
@@ -219,8 +205,7 @@ export class CartService {
     }
 
     async updateCart(data: IUpdateCartRequest): Promise<IUpdateCartResponse> {
-        const { user, userId, id, cartItems } = data;
-        // console.log(dataUpdate);
+        const { user, id, cartItems } = data;
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
@@ -236,22 +221,22 @@ export class CartService {
                 }
             }
 
-            // Cập nhật thông tin của giỏ hàng
+            // Update cart
             const updatedCart = await this.prismaService.cart.update({
                 where: { id },
                 data: {
-                    user_id: userId,
+                    user: user.email,
                     domain: user.domain,
-                    // Xóa tất cả các mục giỏ hàng cũ và thêm lại các mục mới từ DTO
+                    // calculate total price
                     cartItems: {
                         deleteMany: {},
                         create: cartItems.map(cartItem => ({
-                            product: { connect: { id: cartItem.productId } }, // Kết nối với sản phẩm đã tồn tại trong hệ thống
-                            quantity: cartItem.quantity, // Số lượng của sản phẩm
+                            product: { connect: { id: cartItem.productId } },
+                            quantity: cartItem.quantity,
                         })),
                     },
                 },
-                // Bao gồm thông tin về các mục giỏ hàng đã được tạo lại
+                // include cartItems
                 include: {
                     cartItems: true,
                 },
@@ -261,7 +246,6 @@ export class CartService {
                 cart: {
                     ...updatedCart,
                     id: updatedCart.id,
-                    userId: updatedCart.user_id,
                     cartItems: updatedCart.cartItems.map(cartItem => ({
                         ...cartItem,
                         productId: cartItem.product_id,
@@ -310,7 +294,6 @@ export class CartService {
                 cart: {
                     ...deleteCart,
                     id: deleteCart.id,
-                    userId: deleteCart.user_id,
                     cartItems: deleteCart.cartItems.map(cartItem => ({
                         ...cartItem,
                         productId: cartItem.product_id,

@@ -6,6 +6,7 @@ import "e_commerce/productCategory.proto";
 import "e_commerce/voucher.proto";
 import "e_commerce/cart.proto";
 import "e_commerce/review.proto";
+import "e_commerce/order.proto";
 
 package main;
 
