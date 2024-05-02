@@ -2,10 +2,9 @@
  * Represents a custom exception that is thrown when a client request is malformed or invalid.
  * Extends the HttpException class from the '@nestjs/microservices' module.
  */
-import { RpcException } from '@nestjs/microservices';
-import {GrpcAbortedException} from 'nestjs-grpc-exceptions';
+import { GrpcNotFoundException } from 'nestjs-grpc-exceptions';
 
-class GrpcItemNotFoundException extends GrpcAbortedException {
+class GrpcItemNotFoundException extends GrpcNotFoundException {
     constructor(itemName: string) {
         super(`${itemName}`);
         this.message = JSON.stringify({
@@ -16,7 +15,7 @@ class GrpcItemNotFoundException extends GrpcAbortedException {
     }
 }
 
-class GrpcItemExitException extends GrpcAbortedException {
+class GrpcItemExitException extends GrpcNotFoundException {
     constructor(itemName: string) {
         super(`${itemName}`);
         this.message = JSON.stringify({
@@ -27,7 +26,7 @@ class GrpcItemExitException extends GrpcAbortedException {
     }
 }
 
-class GrpcInvalidArgumentException extends GrpcAbortedException {
+class GrpcInvalidArgumentException extends GrpcNotFoundException {
     constructor(error: string | object) {
         super(`${error}`);
         this.message = JSON.stringify({
