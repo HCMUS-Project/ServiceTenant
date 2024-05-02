@@ -24,6 +24,7 @@ async function bootstrap() {
                 'voucher',
                 'cart',
                 'review',
+                'order',
             ],
             protoPath: join(__dirname, '../src/proto/main.proto'),
             url: `${host}:${port}`,

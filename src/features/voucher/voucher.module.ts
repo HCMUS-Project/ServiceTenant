@@ -7,5 +7,6 @@ import { PrismaModule } from 'src/core/prisma/prisma.module';
     imports: [PrismaModule],
     controllers: [VoucherController],
     providers: [VoucherService],
+    exports: [VoucherService],
 })
 export class VoucherModule {}

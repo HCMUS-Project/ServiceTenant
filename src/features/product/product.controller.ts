@@ -20,7 +20,6 @@ import {
     IUpdateProductRequest,
     IUpdateProductResponse,
 } from './interface/product.interface';
-import { SupabaseService } from 'src/util/supabase/supabase.service';
 
 @Controller()
 export class ProductController {
