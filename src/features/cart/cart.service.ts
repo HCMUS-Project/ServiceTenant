@@ -68,7 +68,7 @@ export class CartService {
                     id: cartItems[i].productId,
                 });
                 if (product.quantity < cartItems[i].quantity) {
-                    throw new GrpcInvalidArgumentException('Product not enough');
+                    throw new GrpcInvalidArgumentException('PRODUCT_NOT_ENOUGH');
                 }
             }
 
@@ -81,7 +81,7 @@ export class CartService {
 
             // Check if cart already exists
             if (cartExists !== null) {
-                throw new GrpcAlreadyExistsException('Cart already exists');
+                throw new GrpcAlreadyExistsException('CART_EXISTS');
             }
 
             // Create cart
@@ -111,13 +111,13 @@ export class CartService {
                         productId: cartItem.product_id,
                     })),
                     totalPrice: Number(cart.total_price),
-                    createdAt: cart.created_at.toString(),
-                    updatedAt: cart.updated_at.toString(),
-                    deletedAt: cart.deleted_at ? cart.deleted_at.toString() : null,
+                    createdAt: cart.created_at.toISOString(),
+                    updatedAt: cart.updated_at.toISOString(),
+                    deletedAt: cart.deleted_at ? cart.deleted_at.toISOString() : null,
                 },
             };
         } catch (error) {
-            throw new Error(error.message);
+            throw error;
         }
     }
 
@@ -137,22 +137,21 @@ export class CartService {
             });
 
             if (carts.length == 0) {
-                throw new GrpcItemNotFoundException('Cart');
+                throw new GrpcItemNotFoundException('CART_NOT_FOUND');
             }
 
             return {
                 carts: carts.map(cart => ({
                     ...cart,
                     id: cart.id,
-                    userId: cart.user,
                     cartItems: cart.cartItems.map(cartItem => ({
                         ...cartItem,
                         productId: cartItem.product_id,
                     })),
                     totalPrice: Number(cart.total_price),
-                    createdAt: cart.created_at.toString(),
-                    updatedAt: cart.updated_at.toString(),
-                    deletedAt: cart.deleted_at ? cart.deleted_at.toString() : null,
+                    createdAt: cart.created_at.toISOString(),
+                    updatedAt: cart.updated_at.toISOString(),
+                    deletedAt: cart.deleted_at ? cart.deleted_at.toISOString() : null,
                 })),
             };
         } catch (error) {
@@ -182,7 +181,7 @@ export class CartService {
 
             // check if cart not exists
             if (!cart) {
-                throw new GrpcItemNotFoundException('Cart');
+                throw new GrpcItemNotFoundException('CART_NOT_FOUND');
             }
 
             return {
@@ -194,9 +193,9 @@ export class CartService {
                         productId: cartItem.product_id,
                     })),
                     totalPrice: Number(cart.total_price),
-                    createdAt: cart.created_at.toString(),
-                    updatedAt: cart.updated_at.toString(),
-                    deletedAt: cart.deleted_at ? cart.deleted_at.toString() : null,
+                    createdAt: cart.created_at.toISOString(),
+                    updatedAt: cart.updated_at.toISOString(),
+                    deletedAt: cart.deleted_at ? cart.deleted_at.toISOString() : null,
                 },
             };
         } catch (error) {
@@ -217,7 +216,7 @@ export class CartService {
                     id: cartItems[i].productId,
                 });
                 if (product.quantity < cartItems[i].quantity) {
-                    throw new GrpcInvalidArgumentException('Product not enough');
+                    throw new GrpcInvalidArgumentException('PRODUCT_NOT_ENOUGH');
                 }
             }
 
@@ -251,9 +250,9 @@ export class CartService {
                         productId: cartItem.product_id,
                     })),
                     totalPrice: Number(updatedCart.total_price),
-                    createdAt: updatedCart.created_at.toString(),
-                    updatedAt: updatedCart.updated_at.toString(),
-                    deletedAt: updatedCart.deleted_at ? updatedCart.deleted_at.toString() : null,
+                    createdAt: updatedCart.created_at.toISOString(),
+                    updatedAt: updatedCart.updated_at.toISOString(),
+                    deletedAt: updatedCart.deleted_at ? updatedCart.deleted_at.toISOString() : null,
                 },
             };
         } catch (error) {
@@ -273,7 +272,7 @@ export class CartService {
 
             // check if cart not exists
             if (!cart) {
-                throw new GrpcItemNotFoundException('Cart');
+                throw new GrpcItemNotFoundException('CART_NOT_FOUND');
             }
 
             const deleteCart = await this.prismaService.cart.delete({
@@ -299,9 +298,9 @@ export class CartService {
                         productId: cartItem.product_id,
                     })),
                     totalPrice: Number(deleteCart.total_price),
-                    createdAt: deleteCart.created_at.toString(),
-                    updatedAt: deleteCart.updated_at.toString(),
-                    deletedAt: deleteCart.deleted_at ? deleteCart.deleted_at.toString() : null,
+                    createdAt: deleteCart.created_at.toISOString(),
+                    updatedAt: deleteCart.updated_at.toISOString(),
+                    deletedAt: deleteCart.deleted_at ? deleteCart.deleted_at.toISOString() : null,
                 },
             };
         } catch (error) {

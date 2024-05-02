@@ -28,6 +28,7 @@ import { SupabaseService } from 'src/util/supabase/supabase.service';
 import { ProductCategory } from 'src/proto_build/e_commerce/productCategory_pb';
 import { Prisma } from '@prisma/client';
 import { filter } from 'rxjs';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProductService {
@@ -122,9 +123,9 @@ export class ProductService {
                 numberRating: newProduct.number_rating,
                 price: Number(newProduct.price),
                 rating: Number(newProduct.rating),
-                createdAt: newProduct.created_at.toString(),
-                updatedAt: newProduct.updated_at.toString(),
-                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toString() : null,
+                createdAt: newProduct.created_at.toISOString(),
+                updatedAt: newProduct.updated_at.toISOString(),
+                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toISOString() : null,
                 categories: categoriesNameId,
             } as ICreateProductResponse;
         } catch (error) {
@@ -154,9 +155,9 @@ export class ProductService {
                     numberRating: product.number_rating,
                     price: Number(product.price),
                     rating: Number(product.rating),
-                    createdAt: product.created_at.toString(),
-                    updatedAt: product.updated_at.toString(),
-                    deletedAt: product.deleted_at ? product.deleted_at.toString() : null,
+                    createdAt: product.created_at.toISOString(),
+                    updatedAt: product.updated_at.toISOString(),
+                    deletedAt: product.deleted_at ? product.deleted_at.toISOString() : null,
                     categories: product.categories.map(cateogry => ({
                         id: cateogry.categoryId,
                         name: cateogry.name,
@@ -194,9 +195,9 @@ export class ProductService {
                 numberRating: product.number_rating,
                 price: Number(product.price),
                 rating: Number(product.rating),
-                createdAt: product.created_at.toString(),
-                updatedAt: product.updated_at.toString(),
-                deletedAt: product.deleted_at ? product.deleted_at.toString() : null,
+                createdAt: product.created_at.toISOString(),
+                updatedAt: product.updated_at.toISOString(),
+                deletedAt: product.deleted_at ? product.deleted_at.toISOString() : null,
                 categories: product.categories.map(cateogry => ({
                     id: cateogry.categoryId,
                     name: cateogry.name,
@@ -303,9 +304,9 @@ export class ProductService {
                 numberRating: newProduct.number_rating,
                 price: Number(newProduct.price),
                 rating: Number(newProduct.rating),
-                createdAt: newProduct.created_at.toString(),
-                updatedAt: newProduct.updated_at.toString(),
-                deletedAt: newProduct.deleted_at ? updatedProduct.deleted_at.toString() : null,
+                createdAt: newProduct.created_at.toISOString(),
+                updatedAt: newProduct.updated_at.toISOString(),
+                deletedAt: newProduct.deleted_at ? updatedProduct.deleted_at.toISOString() : null,
                 categories: newProduct.categories.map(category => ({
                     id: category.categoryId,
                     name: category.name,
@@ -364,9 +365,11 @@ export class ProductService {
                 numberRating: deletedProduct.number_rating,
                 price: Number(deletedProduct.price),
                 rating: Number(deletedProduct.rating),
-                createdAt: deletedProduct.created_at.toString(),
-                updatedAt: deletedProduct.updated_at.toString(),
-                deletedAt: deletedProduct.deleted_at ? deletedProduct.deleted_at.toString() : null,
+                createdAt: deletedProduct.created_at.toISOString(),
+                updatedAt: deletedProduct.updated_at.toISOString(),
+                deletedAt: deletedProduct.deleted_at
+                    ? deletedProduct.deleted_at.toISOString()
+                    : null,
                 categories: deletedProduct.categories.map(category => ({
                     id: category.categoryId,
                     name: category.name,
@@ -458,9 +461,9 @@ export class ProductService {
                 numberRating: product.number_rating,
                 price: Number(product.price),
                 rating: Number(product.rating),
-                createdAt: product.created_at.toString(),
-                updatedAt: product.updated_at.toString(),
-                deletedAt: product.deleted_at ? product.deleted_at.toString() : null,
+                createdAt: product.created_at.toISOString(),
+                updatedAt: product.updated_at.toISOString(),
+                deletedAt: product.deleted_at ? product.deleted_at.toISOString() : null,
                 categories: product.categories.map(cateogry => ({
                     id: cateogry.categoryId,
                     name: cateogry.name,
@@ -517,9 +520,9 @@ export class ProductService {
                 numberRating: newProduct.number_rating,
                 price: Number(newProduct.price),
                 rating: Number(newProduct.rating),
-                createdAt: newProduct.created_at.toString(),
-                updatedAt: newProduct.updated_at.toString(),
-                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toString() : null,
+                createdAt: newProduct.created_at.toISOString(),
+                updatedAt: newProduct.updated_at.toISOString(),
+                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toISOString() : null,
                 categories: newProduct.categories.map(category => ({
                     id: category.categoryId,
                     name: category.name,
@@ -578,9 +581,9 @@ export class ProductService {
                 numberRating: newProduct.number_rating,
                 price: Number(newProduct.price),
                 rating: Number(newProduct.rating),
-                createdAt: newProduct.created_at.toString(),
-                updatedAt: newProduct.updated_at.toString(),
-                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toString() : null,
+                createdAt: newProduct.created_at.toISOString(),
+                updatedAt: newProduct.updated_at.toISOString(),
+                deletedAt: newProduct.deleted_at ? newProduct.deleted_at.toISOString() : null,
                 categories: newProduct.categories.map(category => ({
                     id: category.categoryId,
                     name: category.name,
@@ -588,6 +591,20 @@ export class ProductService {
             };
         } catch (error) {
             throw error;
+        }
+    }
+
+    async getPriceOfProduct(productId: string): Promise<Decimal> {
+        try {
+            const product = await this.prismaService.product.findUnique({
+                where: {
+                    id: productId,
+                },
+            });
+
+            return product.price;
+        } catch (error) {
+            throw new Error('Failed to get price of product. Please try again.');
         }
     }
 }
