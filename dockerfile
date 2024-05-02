@@ -11,16 +11,12 @@ COPY . .
 RUN yarn install
 
 # Gen proto
-RUN yarn gen:proto_folder
-RUN yarn gen:proto
+# RUN yarn gen:proto_folder
+# RUN yarn gen:proto
 
-# Wait for PostgreSQL to be up before running migrations
-RUN chmod +x wait-for-it.sh
-RUN ./wait-for-it.sh postgres:5433 --timeout=30 --strict -- echo "Postgres is up"
-
-# Migrate db
-RUN migrate_name="merge_db_from_new_pull" yarn migrate 
-RUN yarn generate
+# # Migrate db
+# RUN migrate_name="merge_db_from_new_pull" yarn migrate 
+# RUN yarn generate
 
 # Creates a "dist" folder with the production build
 RUN yarn build
@@ -28,5 +24,10 @@ RUN yarn build
 # Expose the port your app runs on
 EXPOSE 3002
 
-# Command to run your application
+# Copy entrypoint script and grant execution permissions
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set entrypoint script to run when the container starts
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["yarn", "start"]
