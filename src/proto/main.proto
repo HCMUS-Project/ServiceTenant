@@ -8,7 +8,7 @@ import "e_commerce/cart.proto";
 import "e_commerce/review.proto";
 import "e_commerce/order.proto";
 
-package main;
+package ecommerce;
 
 service AppService {
   rpc FindOne (HeroById) returns (Hero) {}
