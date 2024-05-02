@@ -2,7 +2,7 @@
 FROM node:20
 
 # Set the working directory in the container
-WORKDIR /root/deploy/datn/ServiceEcommerce
+WORKDIR /root/deploy/datn/ServiceECommerce
 
 # Copy package.json and package-lock.json
 COPY . .
