@@ -39,7 +39,6 @@ export class ProductService {
 
     async create(dataRequest: ICreateProductRequest): Promise<ICreateProductResponse> {
         const { user, ...data } = dataRequest;
-        // console.log(dataRequest)
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
@@ -55,9 +54,7 @@ export class ProductService {
             }
 
             // create image
-            // console.log(data.images)
             const imageLink = await this.supabaseService.uploadImageAndGetLink(data.images);
-            // console.log(imageLink)
 
             // create product
             const newProduct = await this.prismaService.product.create({
@@ -80,7 +77,6 @@ export class ProductService {
             const productCategories = [];
             const categoriesNameId = [];
             for (const categoryId of data.categories) {
-                // console.log(categoryId)
                 const category = await this.prismaService.category.findUnique({
                     where: {
                         id: categoryId,
@@ -92,10 +88,8 @@ export class ProductService {
                 });
 
                 if (!category) {
-                    throw new Error(`Category with ID ${categoryId} not found`);
+                    throw new GrpcItemNotFoundException('CATEGORY_NO_FOUND');
                 }
-
-                // console.log(category)
 
                 // Tạo mới một bản ghi trong bảng ProductCategory với trường name lấy từ category
                 const productCategory = this.prismaService.productCategory.create({
@@ -112,8 +106,6 @@ export class ProductService {
                     name: category.name,
                 } as ICategory);
             }
-            // console.log(productCategories)
-            // Thực hiện tạo mới các bản ghi trong bảng ProductCategory trong một giao dịch
             await this.prismaService.$transaction(productCategories);
 
             return {
@@ -186,7 +178,7 @@ export class ProductService {
 
             // check if category not exists
             if (!product) {
-                throw new GrpcItemNotFoundException('Product');
+                throw new GrpcItemNotFoundException('PRODUCT_NOT_FOUND');
             }
 
             return {

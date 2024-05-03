@@ -1,4 +1,6 @@
 import {
+    CancelOrderRequest,
+    CancelOrderResponse,
     CreateOrderRequest,
     CreateOrderResponse,
     GetOrderRequest,
@@ -6,6 +8,8 @@ import {
     ListOrdersRequest,
     ListOrdersResponse,
     OrderProduct,
+    UpdateStageOrderRequest,
+    UpdateStageOrderResponse,
 } from 'src/proto_build/e_commerce/order_pb';
 
 export interface ICreateOrderRequest
@@ -25,3 +29,9 @@ export interface IListOrdersRequest extends ListOrdersRequest.AsObject {}
 export interface IListOrdersResponse extends Omit<ListOrdersResponse.AsObject, 'ordersList'> {
     orders: IGetOrderResponse[];
 }
+
+export interface IUpdateStageOrderRequest extends UpdateStageOrderRequest.AsObject {}
+export interface IUpdateStageOrderResponse extends UpdateStageOrderResponse.AsObject {}
+
+export interface ICancelOrderRequest extends CancelOrderRequest.AsObject {}
+export interface ICancelOrderResponse extends CancelOrderResponse.AsObject {}

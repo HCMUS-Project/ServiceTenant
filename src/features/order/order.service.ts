@@ -3,10 +3,27 @@ import { PrismaService } from 'src/core/prisma/prisma.service';
 import { ProductService } from '../product/product.service';
 import { VoucherService } from '../voucher/voucher.service';
 import {
+    ICancelOrderRequest,
+    ICancelOrderResponse,
     ICreateOrderRequest,
+    ICreateOrderResponse,
     IGetOrderRequest,
     IGetOrderResponse,
+    IListOrdersRequest,
+    IListOrdersResponse,
+    IUpdateStageOrderRequest,
+    IUpdateStageOrderResponse,
 } from './interface/order.interface';
+import {
+    GrpcInvalidArgumentException,
+    GrpcItemNotFoundException,
+} from 'src/common/exceptions/exceptions';
+import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
+import {
+    GrpcPermissionDeniedException,
+    GrpcResourceExhaustedException,
+} from 'nestjs-grpc-exceptions';
+import { Role } from 'src/proto_build/auth/user_token_pb';
 
 @Injectable()
 export class OrderService {
@@ -16,7 +33,7 @@ export class OrderService {
         private VoucherService: VoucherService,
     ) {}
 
-    async create(createOrderDto: ICreateOrderRequest): Promise<any> {
+    async create(createOrderDto: ICreateOrderRequest): Promise<ICreateOrderResponse> {
         try {
             // Check product quantity
             for (let i = 0; i < createOrderDto.productsId.length; i++) {
@@ -25,7 +42,7 @@ export class OrderService {
                     user: createOrderDto.user,
                 });
                 if (product.quantity < createOrderDto.quantities[i]) {
-                    throw new Error(`Quantity of product ${product.name} is not enough`);
+                    throw new GrpcResourceExhaustedException('PRODUCT_OUT_OF_STOCK');
                 }
             }
 
@@ -38,10 +55,10 @@ export class OrderService {
                 });
                 if (voucher_applied !== null) {
                     if (new Date(voucher_applied.voucher.expireAt) < new Date()) {
-                        throw new Error('Voucher is expired');
+                        throw new GrpcResourceExhaustedException('VOUCHER_EXPIRED');
                     }
                 } else {
-                    throw new Error('Voucher is not valid');
+                    throw new GrpcItemNotFoundException('VOUCHER_NOT_FOUND');
                 }
             }
 
@@ -55,7 +72,7 @@ export class OrderService {
             let discount_value = 0;
             if (createOrderDto.voucherId) {
                 if (total_price < Number(voucher_applied.min_app_value)) {
-                    throw new Error('Total price is not enough to apply this voucher');
+                    throw new GrpcResourceExhaustedException('VOUCHER_MIN_APP_VALUE');
                 } else {
                     discount_value = (total_price * Number(voucher_applied.discount_percent)) / 100;
                     if (discount_value > total_price) {
@@ -101,14 +118,17 @@ export class OrderService {
                         id: order.orderItems[i].product_id,
                     },
                     data: {
-                        quantity: order.orderItems[i].quantity,
+                        quantity: { decrement: order.orderItems[i].quantity },
+                        sold: { increment: order.orderItems[i].quantity },
                     },
                 });
             }
 
-            // Update cart
+            //TODO: Update cart
 
-            return order;
+            return {
+                orderId: order.id,
+            };
         } catch (error) {
             throw error;
         }
@@ -146,14 +166,49 @@ export class OrderService {
                 },
             });
 
+            if (!order) throw new GrpcItemNotFoundException('ORDER_NOT_FOUND');
+
             return {
                 orderId: order.id,
                 address: order.address,
                 phone: order.phone,
                 voucherId: order.voucher_id,
+                stage: order.stage,
                 products: order.orderItems.map(item => ({
                     productId: item.product_id,
                     quantity: item.quantity,
+                })),
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findAllOrdersOfUser(data: IListOrdersRequest): Promise<IListOrdersResponse> {
+        try {
+            let filter = {};
+            if (data.stage) filter = { stage: data.stage };
+
+            const orders = await this.prismaService.order.findMany({
+                where: {
+                    domain: data.user.domain,
+                    ...filter,
+                },
+                include: {
+                    orderItems: true,
+                },
+            });
+            return {
+                orders: orders.map(order => ({
+                    orderId: order.id,
+                    address: order.address,
+                    phone: order.phone,
+                    voucherId: order.voucher_id,
+                    stage: order.stage,
+                    products: order.orderItems.map(item => ({
+                        productId: item.product_id,
+                        quantity: item.quantity,
+                    })),
                 })),
             };
         } catch (error) {
@@ -161,19 +216,106 @@ export class OrderService {
         }
     }
 
-    // async findAllOrdersOfUser() {
-    //     try {
-    //         return this.prismaService.order.findMany({
-    //             where: {
-    //                 user: ,
-    //                 domain: domain,
-    //             },
-    //             include: {
-    //                 orderItems: true,
-    //             },
-    //         });
-    //     } catch (error) {
-    //         throw new Error(error.message);
-    //     }
-    // }
+    async updateOrderStage(data: IUpdateStageOrderRequest): Promise<IUpdateStageOrderResponse> {
+        // Check if stage is valid
+        if (
+            data.stage !== 'pending' &&
+            data.stage !== 'shipping' &&
+            data.stage !== 'completed' &&
+            data.stage !== 'cancelled'
+        )
+            throw new GrpcInvalidArgumentException('INVALID_ARGUMENT');
+
+        // Check user role
+        if (data.user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
+            throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
+        }
+
+        try {
+            // Check if order exists
+            if (
+                (await this.prismaService.order.count({
+                    where: { id: data.orderId, domain: data.user.domain },
+                })) === 0
+            )
+                throw new GrpcItemNotFoundException('ORDER_NOT_FOUND');
+
+            // Update order stage
+            const order = await this.prismaService.order.update({
+                where: {
+                    id: data.orderId,
+                    domain: data.user.domain,
+                },
+                data: {
+                    stage: data.stage,
+                },
+            });
+
+            return {
+                orderId: order.id,
+                stage: order.stage,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async cancelOrder(data: ICancelOrderRequest): Promise<ICancelOrderResponse> {
+        try {
+            // Check if order exists
+            const order = await this.prismaService.order.findUnique({
+                where: {
+                    id: data.id,
+                    domain: data.user.domain,
+                },
+                include: {
+                    orderItems: true,
+                },
+            });
+            if (!order) throw new GrpcItemNotFoundException('ORDER_NOT_FOUND');
+            if (order.stage === 'cancelled')
+                throw new GrpcResourceExhaustedException('ORDER_CANCELLED');
+
+            // Check if user is the owner of the order
+            if (data.user.role.toString() !== getEnumKeyByEnumValue(Role, Role.USER)) {
+                // cancel order with user
+                // check if order is in pending stage
+                if (order.stage !== 'pending')
+                    throw new GrpcResourceExhaustedException('CANNOT_CANCEL_ORDER');
+            }
+            if (data.user.role.toString() === getEnumKeyByEnumValue(Role, Role.TENANT)) {
+                // cancel order with tenant
+            } else throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
+
+            // update order stage
+            await this.prismaService.order.update({
+                where: {
+                    id: data.id,
+                },
+                data: {
+                    stage: 'cancelled',
+                },
+            });
+
+            // update product quantity
+            for (let i = 0; i < order.orderItems.length; i++) {
+                await this.prismaService.product.update({
+                    where: {
+                        id: order.orderItems[i].product_id,
+                    },
+                    data: {
+                        quantity: {
+                            increment: order.orderItems[i].quantity,
+                        },
+                    },
+                });
+            }
+
+            return {
+                result: 'success',
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
 }
