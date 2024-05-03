@@ -60,6 +60,11 @@ export class CategoryService {
             // find all categories by domain
             const categories = await this.prismaService.category.findMany({
                 where: { domain },
+                include: {
+                    _count: {
+                        select: { ProductCategory: true },
+                    },
+                },
             });
 
             return {
@@ -69,6 +74,7 @@ export class CategoryService {
                     description: category.description,
                     domain: category.domain,
                     createdAt: category.created_at.getTime(),
+                    totalProducts: category._count.ProductCategory,
                 })),
             };
         } catch (error) {
@@ -81,6 +87,11 @@ export class CategoryService {
             // find category by id and domain
             const category = await this.prismaService.category.findFirst({
                 where: { id, domain },
+                include: {
+                    _count: {
+                        select: { ProductCategory: true },
+                    },
+                },
             });
 
             // check if category not exists
@@ -94,6 +105,7 @@ export class CategoryService {
                 description: category.description,
                 domain: category.domain,
                 createdAt: category.created_at.getTime(),
+                totalProducts: category._count.ProductCategory,
             };
         } catch (error) {
             throw error;
