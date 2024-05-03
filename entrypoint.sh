@@ -15,5 +15,8 @@ yarn generate
 
 yarn build
 
+# Start Prisma Studio in the background
+npx prisma studio --port 5555 &
+
 # Start the main process.
 exec "$@"
