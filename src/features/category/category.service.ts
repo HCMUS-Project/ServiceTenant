@@ -48,6 +48,7 @@ export class CategoryService {
             return {
                 id: newCategory.id,
                 name: newCategory.name,
+                description: newCategory.description,
             };
         } catch (error) {
             throw error;
@@ -128,6 +129,7 @@ export class CategoryService {
             return {
                 id: updatedCategory.id,
                 name: updatedCategory.name,
+                description: updatedCategory.description,
             };
         } catch (error) {
             throw error;

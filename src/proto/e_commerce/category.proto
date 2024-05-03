@@ -21,6 +21,7 @@ message CreateCategoryRequest {
 message CreateCategoryResponse {
     string id = 1;
     string name = 2;
+    string description = 3;
 }
 
 message FindOneCategoryRequest {
@@ -54,6 +55,7 @@ message UpdateCategoryRequest{
 message UpdateCategoryResponse{
     string id = 1;
     string name = 2;
+    string description = 3;
 }
 
 message RemoveCategoryRequest{
