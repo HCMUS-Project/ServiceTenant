@@ -51,11 +51,7 @@ message UpdateProductRequest {
     int32 quantity = 5;
     string description = 6;
     repeated string images = 7;
-    int32 views = 8;
-    double rating = 9;
-    int32 number_rating = 10;
-    int32 sold = 11;
-    repeated string categories = 12;
+    repeated string categories = 8;
 }
 
 message DeleteProductRequest {

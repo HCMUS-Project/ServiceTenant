@@ -201,7 +201,7 @@ export class ProductService {
     }
 
     async update(data: IUpdateProductRequest): Promise<IUpdateProductResponse> {
-        const { user, id, categories, numberRating, ...dataUpdate } = data;
+        const { user, id, categories, ...dataUpdate } = data;
 
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
@@ -223,7 +223,6 @@ export class ProductService {
                 where: { id: id, domain: user.domain },
                 data: {
                     ...dataUpdate,
-                    number_rating: numberRating,
                 },
             });
 
