@@ -6,8 +6,8 @@ package order;
 
 service OrderService {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
-//   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
-//   rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+    rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
 }
 
 message CreateOrderRequest{
@@ -26,5 +26,27 @@ message CreateOrderResponse{
 
 message GetOrderRequest{
     string order_id = 1;
+    userToken.User user = 2;
+}
+
+message OrderProduct{
+    string product_id = 1;
+    int32 quantity = 2;
+}
+
+message GetOrderResponse{
+    string order_id = 1;
+    string phone = 5;
+    string address = 6;
+    string voucher_id = 7;
+    repeated OrderProduct products = 8;
+}
+
+message ListOrdersRequest{
+    userToken.User user = 1;
+}
+
+message ListOrdersResponse{
+    repeated GetOrderResponse orders = 1;
 }
 

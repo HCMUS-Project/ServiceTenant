@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { ProductService } from '../product/product.service';
 import { VoucherService } from '../voucher/voucher.service';
-import { ICreateOrderRequest } from './interface/order.interface';
+import {
+    ICreateOrderRequest,
+    IGetOrderRequest,
+    IGetOrderResponse,
+} from './interface/order.interface';
 
 @Injectable()
 export class OrderService {
@@ -129,4 +133,47 @@ export class OrderService {
             throw new Error('Failed to calculate total price. Please try again.');
         }
     }
+
+    async findOne(data: IGetOrderRequest): Promise<IGetOrderResponse> {
+        try {
+            const order = await this.prismaService.order.findUnique({
+                where: {
+                    id: data.orderId,
+                    domain: data.user.domain,
+                },
+                include: {
+                    orderItems: true,
+                },
+            });
+
+            return {
+                orderId: order.id,
+                address: order.address,
+                phone: order.phone,
+                voucherId: order.voucher_id,
+                products: order.orderItems.map(item => ({
+                    productId: item.product_id,
+                    quantity: item.quantity,
+                })),
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    // async findAllOrdersOfUser() {
+    //     try {
+    //         return this.prismaService.order.findMany({
+    //             where: {
+    //                 user: ,
+    //                 domain: domain,
+    //             },
+    //             include: {
+    //                 orderItems: true,
+    //             },
+    //         });
+    //     } catch (error) {
+    //         throw new Error(error.message);
+    //     }
+    // }
 }
