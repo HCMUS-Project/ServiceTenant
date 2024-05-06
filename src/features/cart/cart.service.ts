@@ -57,7 +57,7 @@ export class CartService {
     async create(dataRequest: ICreateCartRequest): Promise<ICreateCartResponse> {
         const { user, cartItems } = dataRequest;
         // check role of user
-        if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
+        if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.USER)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
         }
         try {
@@ -206,7 +206,7 @@ export class CartService {
     async updateCart(data: IUpdateCartRequest): Promise<IUpdateCartResponse> {
         const { user, id, cartItems } = data;
         // check role of user
-        if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
+        if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.USER)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
         }
         try {
