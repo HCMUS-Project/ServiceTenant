@@ -62,6 +62,8 @@ export class OrderService {
                 }
             }
 
+            voucher_applied = voucher_applied.voucher
+
             // Calculate total price
             const total_price = await this.calculateTotalPrice(
                 createOrderDto.productsId,
