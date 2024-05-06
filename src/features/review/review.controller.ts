@@ -1,34 +1,38 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, MessagePattern, Payload } from '@nestjs/microservices';
 import { ReviewService } from './review.service';
-import {ICreateReviewRequest, ICreateReviewResponse} from './interface/review.interface';
+import {
+    ICreateReviewRequest,
+    ICreateReviewResponse,
+    IDeleteReviewRequest,
+    IDeleteReviewResponse,
+    IFindAllReviewRequest,
+    IFindAllReviewResponse,
+    IUpdateReviewRequest,
+    IUpdateReviewResponse,
+} from './interface/review.interface';
 
 @Controller()
 export class ReviewController {
-  constructor(private readonly reviewService: ReviewService) {}
+    constructor(private readonly reviewService: ReviewService) {}
 
-  // @GrpcMethod('ReviewService', 'CreateReview')
-  // async create(data: ICreateReviewRequest): Promise<ICreateReviewResponse> {
-  //     return await this.reviewService.create(data);
-  // }
+    @GrpcMethod('ReviewService', 'CreateReview')
+    async create(data: ICreateReviewRequest): Promise<ICreateReviewResponse> {
+        return await this.reviewService.create(data);
+    }
 
-  // @MessagePattern('findAllReview')
-  // findAll() {
-  //   return this.reviewService.findAll();
-  // }
+    @GrpcMethod('ReviewService', 'FindAllReviews')
+    async findAll(data: IFindAllReviewRequest): Promise<IFindAllReviewResponse> {
+        return await this.reviewService.findAll(data);
+    }
 
-  // @MessagePattern('findOneReview')
-  // findOne(@Payload() id: number) {
-  //   return this.reviewService.findOne(id);
-  // }
+    @GrpcMethod('ReviewService', 'UpdateReview')
+    async update(data: IUpdateReviewRequest): Promise<IUpdateReviewResponse> {
+        return await this.reviewService.update(data);
+    }
 
-  // @MessagePattern('updateReview')
-  // update(@Payload() updateReviewDto: UpdateReviewDto) {
-  //   return this.reviewService.update(updateReviewDto.id, updateReviewDto);
-  // }
-
-  // @MessagePattern('removeReview')
-  // remove(@Payload() id: number) {
-  //   return this.reviewService.remove(id);
-  // }
+    @GrpcMethod('ReviewService', 'DeleteReview')
+    async delete(data: IDeleteReviewRequest): Promise<IDeleteReviewResponse> {
+        return await this.reviewService.remove(data);
+    }
 }
