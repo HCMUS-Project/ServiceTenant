@@ -15,11 +15,17 @@ model Tenant {
   is_locked  Boolean   @default(false)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+  banners    Banner[]  // Establish a one-to-many relationship with Banner
+  policies   PolicyAndTerm?  // Establish a one-to-many relationship with PolicyAndTerm
+  subscriptions Subscription?  // Establish a one-to-many relationship with Subscription
+  TenantProfile TenantProfile?  // Establish a one-to-one relationship with TenantProfile
+  ThemeConfig ThemeConfig?  // Establish a one-to-one relationship with ThemeConfig
 }
 
 model Banner {
   id           String    @id @default(uuid()) @unique
   tenant_id    String
+  tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
   title        String
   description  String
   text_color   String
@@ -28,9 +34,11 @@ model Banner {
   updatedAt    DateTime  @updatedAt
 }
 
+
 model PolicyAndTerm {
   id         String    @id @default(uuid()) @unique
-  tenant_id  String
+  tenant_id  String    @unique
+  tenant     Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
   policy     String
   term       String
   createdAt  DateTime  @default(now())
@@ -39,7 +47,8 @@ model PolicyAndTerm {
 
 model Subscription {
   id           String    @id @default(uuid()) @unique
-  tenant_id    String
+  tenant_id    String    @unique
+  tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
   value        Float
   next_billing DateTime
   createdAt    DateTime  @default(now())
@@ -48,7 +57,8 @@ model Subscription {
 
 model TenantProfile {
   id             String    @id @default(uuid()) @unique
-  tenant_id      String
+  tenant_id      String   @unique
+  tenant         Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
   email          String
   address        String
   phone_number   String
@@ -63,7 +73,8 @@ model TenantProfile {
 
 model ThemeConfig {
   id                 String    @id @default(uuid()) @unique
-  tenant_id          String
+  tenant_id          String   @unique
+  tenant             Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
   header_color       String
   header_text_color  String
   body_color         String

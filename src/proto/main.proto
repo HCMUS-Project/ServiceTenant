@@ -3,7 +3,7 @@ syntax = "proto3";
 import "tenant/tenant.proto";
 import "tenant/banner.proto";
 import "tenant/policyandterm.proto";
-import "tenant/subcription.proto";
+import "tenant/subscription.proto";
 import "tenant/tenantprofile.proto";
 import "tenant/themeconfig.proto";
 

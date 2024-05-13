@@ -11,7 +11,10 @@ import { CacheModule } from './core/cache/modules/cache.module';
 import { PrismaModule } from './core/prisma/prisma.module';
 import { TenantModule } from './features/tenant/tenant.module';
 import { TenantProfileModule } from './features/tenantprofile/tenantprofile.module';
-
+import { BannerModule } from './features/banner/banner.module';
+import { PolicyAndTermModule } from './features/policyandterm/policyandterm.module';
+import { SubscriptionModule } from './features/subcription/subscription.module';
+import { ThemeConfigModule } from './features/themeconfig/themeconfig.module';
 @Module({
     imports: [
         LoggerModule,
@@ -21,6 +24,10 @@ import { TenantProfileModule } from './features/tenantprofile/tenantprofile.modu
         PrismaModule,
         TenantModule,
         TenantProfileModule,
+        BannerModule,
+        PolicyAndTermModule,
+        SubscriptionModule,
+        ThemeConfigModule,
     ],
     controllers: [AppController],
     providers: [

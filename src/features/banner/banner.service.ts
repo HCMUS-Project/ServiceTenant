@@ -3,7 +3,7 @@ import { PrismaService } from 'src/core/prisma/prisma.service';
 import {
     ICreateBannerRequest,
     ICreateBannerResponse,
-    IFindBannerByIdRequest,
+    IFindBannerByTenantIdRequest,
     IFindBannerByIdResponse,
     IDeleteBannerRequest,
     IDeleteBannerResponse,
@@ -16,8 +16,9 @@ import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
 import { GrpcAlreadyExistsException, GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
 import { Role } from 'src/proto_build/auth/user_token_pb';
 import { Banner } from 'src/proto_build/tenant/banner_pb';
-import { GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
+import { GrpcInvalidArgumentException, GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
 import { SupabaseService } from 'src/util/supabase/supabase.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BannerService {
@@ -27,12 +28,15 @@ export class BannerService {
 
     async create(dataRequest: ICreateBannerRequest): Promise<ICreateBannerResponse> {
         const { user, ...data } = dataRequest;
-        console.log(dataRequest);
+        
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
         }
         try {
+            if (!data.image) {
+                throw new GrpcInvalidArgumentException('INVALID_IMAGE');
+            }
             // check if category name already exists
             if (
                 await this.prismaService.banner.findFirst({
@@ -67,21 +71,35 @@ export class BannerService {
                 },
             } ;
         } catch (error) {
-            throw error;
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                // Kiểm tra mã lỗi cụ thể từ Prisma
+                if (error.code === 'P2002') {
+                    throw new GrpcAlreadyExistsException('TENANT_PROFILE_ALREADY_EXISTS');
+                } else if (error.code === 'P2003') {
+                    throw new GrpcInvalidArgumentException('INVALID_TENANT_ID');
+                } else {
+                    console.error('Error code:', error.code, 'Error message:', error.message);
+                    throw error;
+                }
+            } else {
+                // Xử lý các lỗi không phải do Prisma
+                console.error('Unexpected error:', error);
+                throw error;
+            }
         }
     }
 
-    async findBannerById(data: IFindBannerByIdRequest): Promise<IFindBannerByIdResponse> {
-        const { id } = data;
+    async findBannerByTenantId(data: IFindBannerByTenantIdRequest): Promise<IFindBannerByIdResponse> {
+        const { tenantId } = data;
         try {
             // find Banner by id and domain
-            const Banner = await this.prismaService.banner.findUnique({
-                where: { id: id},
+            const Banner = await this.prismaService.banner.findFirst({
+                where: { tenant_id: tenantId },
             });
 
             // check if Banner not exists
             if (!Banner) {
-                throw new GrpcItemNotFoundException('BANNER');
+                throw new GrpcItemNotFoundException('BANNER_NOT_FOUND');
             }
 
             return {
@@ -101,36 +119,6 @@ export class BannerService {
             throw error;
         }
     }
-
-    // async findBannerByDomain(data: IFindBannerByDomainRequest): Promise<IFindBannerByDomainResponse> {
-    //     const { user } = data;
-    //     try {
-    //         // find Banner by id and domain
-    //         const Banner = await this.prismaService.banner.findFirst({
-    //             where: { domain: user.domain },
-    //         });
-
-    //         // check if Banner not exists
-    //         if (!Banner) {
-    //             throw new GrpcItemNotFoundException('Banner');
-    //         }
-
-    //         return {
-    //             Banner: {
-    //                 id: Banner.id,
-    //                 ownerId: Banner.owner_id,
-    //                 name: Banner.name,
-    //                 isLocked: Banner.is_locked,
-    //                 createdAt: Banner.createdAt.toISOString(),
-    //                 updatedAt: Banner.updatedAt.toISOString(),
-    //                 domain: Banner.domain,
-    //             },
-    //             // expireAt: newBanner.expire_at
-    //         } as IBannerResponse;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     async updateBanner(data: IUpdateBannerRequest): Promise<IUpdateBannerResponse> {
         const { user, ...dataUpdate } = data;
@@ -193,7 +181,7 @@ export class BannerService {
 
             // if the Banner does not exist, throw an error
             if (!Banner) {
-                throw new GrpcItemNotFoundException('Banner');
+                throw new GrpcItemNotFoundException('BANNER_NOT_FOUND');
             }
 
             // delete Banner by id and domain

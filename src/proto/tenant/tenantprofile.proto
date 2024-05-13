@@ -6,7 +6,7 @@ package tenantProfile;
 
 service TenantProfileService {
     rpc CreateTenantProfile(CreateTenantProfileRequest) returns (TenantProfileResponse);
-    rpc FindTenantProfileById(FindTenantProfileByIdRequest) returns (TenantProfileResponse);
+    rpc FindTenantProfileByTenantId(FindTenantProfileByTenantIdRequest) returns (TenantProfileResponse);
     rpc UpdateTenantProfile(UpdateTenantProfileRequest) returns (TenantProfileResponse);
     rpc DeleteTenantProfile(DeleteTenantProfileRequest) returns (TenantProfileResponse);
 }
@@ -40,23 +40,23 @@ message CreateTenantProfileRequest {
 }
 
 
-message FindTenantProfileByIdRequest {
+message FindTenantProfileByTenantIdRequest {
     userToken.User user = 1;
-    string id = 2;
+    string tenant_id = 2;
 }
 
 message UpdateTenantProfileRequest {
     userToken.User user = 1;
     string id = 2;
     string tenant_id = 3;
-    string email = 4;
-    string address = 5;
-    string phone_number = 6;
-    string logo = 7;
-    string description = 8;
-    string facebook_url = 9;
-    string instagram_url = 10;
-    string youtube_url = 11;
+    optional string email = 4;
+    optional string address = 5;
+    optional string phone_number = 6;
+    optional string logo = 7;
+    optional string description = 8;
+    optional string facebook_url = 9;
+    optional string instagram_url = 10;
+    optional string youtube_url = 11;
 }
 
 message DeleteTenantProfileRequest {

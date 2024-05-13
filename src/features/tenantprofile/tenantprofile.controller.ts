@@ -4,7 +4,7 @@ import { TenantProfileService } from './tenantprofile.service';
 import {
     ICreateTenantProfileRequest,
     ICreateTenantProfileResponse,
-    IFindTenantProfileByIdRequest,
+    IFindTenantProfileByTenantIdRequest,
     IFindTenantProfileByIdResponse,
     IDeleteTenantProfileRequest,
     IDeleteTenantProfileResponse,
@@ -14,16 +14,17 @@ import {
 
 @Controller()
 export class TenantProfileController {
-    constructor(private readonly TenantProfileService: TenantProfileService) {}
+    constructor(private readonly TenantProfileService: TenantProfileService) {
+    }
 
     @GrpcMethod('TenantProfileService', 'CreateTenantProfile')
     async create(data: ICreateTenantProfileRequest): Promise<ICreateTenantProfileResponse> {
         return await this.TenantProfileService.create(data);
     }
 
-    @GrpcMethod('TenantProfileService', 'FindTenantProfileById')
-    async findById(data: IFindTenantProfileByIdRequest): Promise<IFindTenantProfileByIdResponse> {
-        return await this.TenantProfileService.findTenantProfileById(data);
+    @GrpcMethod('TenantProfileService', 'FindTenantProfileByTenantId')
+    async findByTenantId(data: IFindTenantProfileByTenantIdRequest): Promise<IFindTenantProfileByIdResponse> {
+        return await this.TenantProfileService.findTenantProfileByTenantId(data);
     }
 
     @GrpcMethod('TenantProfileService', 'UpdateTenantProfile')

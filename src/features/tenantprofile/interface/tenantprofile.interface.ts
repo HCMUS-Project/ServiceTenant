@@ -1,4 +1,4 @@
-import { CreateTenantProfileRequest, DeleteTenantProfileRequest, FindTenantProfileByIdRequest, TenantProfile, TenantProfileResponse, UpdateTenantProfileRequest } from "src/proto_build/tenant/tenantprofile_pb";
+import { CreateTenantProfileRequest, DeleteTenantProfileRequest, FindTenantProfileByTenantIdRequest, TenantProfile, TenantProfileResponse, UpdateTenantProfileRequest } from "src/proto_build/tenant/tenantprofile_pb";
 
 
 
@@ -9,7 +9,7 @@ export interface ITenantProfileResponse extends TenantProfileResponse.AsObject {
 export interface ICreateTenantProfileRequest extends CreateTenantProfileRequest.AsObject {}
 export interface ICreateTenantProfileResponse extends TenantProfileResponse.AsObject {}
 
-export interface IFindTenantProfileByIdRequest extends FindTenantProfileByIdRequest.AsObject {}
+export interface IFindTenantProfileByTenantIdRequest extends FindTenantProfileByTenantIdRequest.AsObject {}
 export interface IFindTenantProfileByIdResponse extends TenantProfileResponse.AsObject {}
 
 export interface IUpdateTenantProfileRequest extends UpdateTenantProfileRequest.AsObject {}

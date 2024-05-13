@@ -15,7 +15,7 @@ export class SupabaseService {
     }
 
     async getSupabaseStorageImage(imageFilename, supabase): Promise<string> {
-        const { data } = supabase.storage.from('datn.product').getPublicUrl(imageFilename);
+        const { data } = supabase.storage.from('datn.tenant').getPublicUrl(imageFilename);
 
         if (data) {
             return data.publicUrl;
@@ -49,7 +49,7 @@ export class SupabaseService {
                     const imageName = 'service/' + uuidv4();
                     // console.log(imageName)
                     const { data, error } = await this.supabase.storage
-                        .from('datn.product')
+                        .from('datn.tenant')
                         .upload(imageName, imageData, {
                             contentType: `image/${imageType}`, // use `image/png` for png
                         });

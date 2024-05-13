@@ -77,7 +77,7 @@ export class TenantService {
 
             // check if Tenant not exists
             if (!Tenant) {
-                throw new GrpcItemNotFoundException('Tenant');
+                throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
             }
 
             return {
@@ -107,7 +107,7 @@ export class TenantService {
 
             // check if Tenant not exists
             if (!Tenant) {
-                throw new GrpcItemNotFoundException('Tenant');
+                throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
             }
 
             return {
@@ -185,7 +185,7 @@ export class TenantService {
 
             // if the Tenant does not exist, throw an error
             if (!Tenant) {
-                throw new GrpcItemNotFoundException('Tenant');
+                throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
             }
 
             // delete Tenant by id and domain

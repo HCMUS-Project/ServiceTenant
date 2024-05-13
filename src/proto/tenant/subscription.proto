@@ -6,8 +6,7 @@ package subscription;
 
 service SubscriptionService {
     rpc CreateSubscription(CreateSubscriptionRequest) returns (SubscriptionResponse);
-    rpc FindAllSubscriptions(FindAllSubscriptionsRequest) returns (FindAllSubscriptionsResponse);
-    rpc FindSubscriptionById(FindSubscriptionByIdRequest) returns (SubscriptionResponse);
+    rpc FindSubscriptionByTenantId(FindSubscriptionByTenantIdRequest) returns (SubscriptionResponse);
     rpc UpdateSubscription(UpdateSubscriptionRequest) returns (SubscriptionResponse);
     rpc DeleteSubscription(DeleteSubscriptionRequest) returns (SubscriptionResponse);
 }
@@ -28,12 +27,17 @@ message CreateSubscriptionRequest {
     string next_billing = 4;
 }
 
+message FindSubscriptionByTenantIdRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+}
+
 message UpdateSubscriptionRequest {
     userToken.User user = 1;
     string id = 2;
     string tenant_id = 3;
-    float value = 4;
-    string next_billing = 5;
+    optional float value = 4;
+    optional string next_billing = 5;
 }
 
 message DeleteSubscriptionRequest {
@@ -45,15 +49,3 @@ message SubscriptionResponse {
     Subscription subscription = 1;
 }
 
-message FindAllSubscriptionsRequest {
-    userToken.User user = 1;
-}
-
-message FindSubscriptionByIdRequest {
-    userToken.User user = 1;
-    string id = 2;
-}
-
-message FindAllSubscriptionsResponse {
-    repeated Subscription subscriptions = 1;
-}

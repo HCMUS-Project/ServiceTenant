@@ -6,8 +6,7 @@ package banner;
 
 service BannerService {
     rpc CreateBanner(CreateBannerRequest) returns (BannerResponse);
-    rpc FindAllBanners(FindAllBannersRequest) returns (FindAllBannersResponse);
-    rpc FindBannerById(FindBannerByIdRequest) returns (BannerResponse);
+    rpc FindBannerByTenantId(FindBannerByTenantIdRequest) returns (BannerResponse);
     rpc UpdateBanner(UpdateBannerRequest) returns (BannerResponse);
     rpc DeleteBanner(DeleteBannerRequest) returns (BannerResponse);
 }
@@ -32,25 +31,19 @@ message CreateBannerRequest {
     string image = 6;
 }
 
-message FindAllBannersRequest {
+message FindBannerByTenantIdRequest {
     userToken.User user = 1;
     string tenant_id = 2;
-}
-
-message FindBannerByIdRequest {
-    userToken.User user = 1;
-    string tenant_id = 2;
-    string id = 3;
 }
 
 message UpdateBannerRequest {
     userToken.User user = 1;
     string tenant_id = 2;
-    string id = 3;
-    string title = 4;
-    string description = 5;
-    string text_color = 6;
-    string image = 7;
+    optional string id = 3;
+    optional string title = 4;
+    optional string description = 5;
+    optional string text_color = 6;
+    optional string image = 7;
 }
 
 message DeleteBannerRequest {

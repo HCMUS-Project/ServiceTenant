@@ -3,7 +3,7 @@ import { PrismaService } from 'src/core/prisma/prisma.service';
 import {
     ICreateTenantProfileRequest,
     ICreateTenantProfileResponse,
-    IFindTenantProfileByIdRequest,
+    IFindTenantProfileByTenantIdRequest,
     IFindTenantProfileByIdResponse,
     IDeleteTenantProfileRequest,
     IDeleteTenantProfileResponse,
@@ -13,11 +13,12 @@ import {
 } from './interface/tenantprofile.interface';
 
 import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
-import { GrpcAlreadyExistsException, GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
+import { GrpcAlreadyExistsException, GrpcInternalException, GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
 import { Role } from 'src/proto_build/auth/user_token_pb';
 import { TenantProfile } from 'src/proto_build/tenant/tenantprofile_pb';
 import { SupabaseService } from 'src/util/supabase/supabase.service';
-import { GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
+import { GrpcInvalidArgumentException, GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TenantProfileService {
@@ -75,21 +76,35 @@ export class TenantProfileService {
                 },
             } ;
         } catch (error) {
-            throw error;
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                // Kiểm tra mã lỗi cụ thể từ Prisma
+                if (error.code === 'P2002') {
+                    throw new GrpcAlreadyExistsException('TENANT_PROFILE_ALREADY_EXISTS');
+                } else if (error.code === 'P2003') {
+                    throw new GrpcInvalidArgumentException('INVALID_TENANT_ID');
+                } else {
+                    console.error('Error code:', error.code, 'Error message:', error.message);
+                    throw error;
+                }
+            } else {
+                // Xử lý các lỗi không phải do Prisma
+                console.error('Unexpected error:', error);
+                throw error;
+            }
         }
     }
 
-    async findTenantProfileById(data: IFindTenantProfileByIdRequest): Promise<IFindTenantProfileByIdResponse> {
-        const { id } = data;
+    async findTenantProfileByTenantId(data: IFindTenantProfileByTenantIdRequest): Promise<IFindTenantProfileByIdResponse> {
+        const { tenantId } = data;
         try {
             // find TenantProfile by id and domain
-            const TenantProfile = await this.prismaService.tenantProfile.findUnique({
-                where: { id: id},
+            const TenantProfile = await this.prismaService.tenantProfile.findFirst({
+                where: { tenant_id: tenantId},
             });
 
             // check if TenantProfile not exists
             if (!TenantProfile) {
-                throw new GrpcItemNotFoundException('TenantProfile');
+                throw new GrpcItemNotFoundException('TENANT_PROFILE_NOT_FOUND');
             }
 
             return {
@@ -128,7 +143,7 @@ export class TenantProfileService {
 
             // If the TenantProfile does not exist, throw an error
             if (!TenantProfile) {
-                throw new GrpcItemNotFoundException('TenantProfile_NOT_FOUND');
+                throw new GrpcItemNotFoundException('TENANT_PROFILE_NOT_FOUND');
             }
 
             // If the TenantProfile exists, perform the update
@@ -183,7 +198,7 @@ export class TenantProfileService {
 
             // if the TenantProfile does not exist, throw an error
             if (!TenantProfile) {
-                throw new GrpcItemNotFoundException('TenantProfile');
+                throw new GrpcItemNotFoundException('TENANT_PROFILE_NOT_FOUND');
             }
 
             // delete TenantProfile by id and domain

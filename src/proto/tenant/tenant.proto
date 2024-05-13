@@ -41,7 +41,7 @@ message UpdateTenantRequest {
     userToken.User user = 1;
     string id = 2;
     string owner_id = 3;
-    string name = 4;
+    optional string name = 4;
     string domain = 5;
 }
 
