@@ -1,14 +1,13 @@
 syntax = "proto3";
 
-import "e_commerce/category.proto";
-import "e_commerce/product.proto";
-import "e_commerce/productCategory.proto";
-import "e_commerce/voucher.proto";
-import "e_commerce/cart.proto";
-import "e_commerce/review.proto";
-import "e_commerce/order.proto";
+import "tenant/tenant.proto";
+import "tenant/banner.proto";
+import "tenant/policyandterm.proto";
+import "tenant/subcription.proto";
+import "tenant/tenantprofile.proto";
+import "tenant/themeconfig.proto";
 
-package ecommerce;
+package tenant;
 
 service AppService {
   rpc FindOne (HeroById) returns (Hero) {}

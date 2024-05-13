@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+import "google/protobuf/timestamp.proto";
+
+package policy_and_term;
+
+service PolicyAndTermService {
+    rpc CreatePolicyAndTerm(CreatePolicyAndTermRequest) returns (PolicyAndTermResponse);
+    rpc FindAllPolicyAndTerms(FindAllPolicyAndTermsRequest) returns (FindAllPolicyAndTermsResponse);
+    rpc FindPolicyAndTermById(FindPolicyAndTermByIdRequest) returns (PolicyAndTermResponse);
+    rpc UpdatePolicyAndTerm(UpdatePolicyAndTermRequest) returns (PolicyAndTermResponse);
+    rpc DeletePolicyAndTerm(DeletePolicyAndTermRequest) returns (PolicyAndTermResponse);
+}
+
+message PolicyAndTerm {
+    string id = 1;
+    string tenant_id = 2;
+    string policy = 3;
+    string term = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+message CreatePolicyAndTermRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string policy = 3;
+    string term = 4;
+}
+
+message UpdatePolicyAndTermRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string tenant_id = 3;
+    string policy = 4;
+    string term = 5;
+}
+
+message DeletePolicyAndTermRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message PolicyAndTermResponse {
+    PolicyAndTerm policy_and_term = 1;
+}
+
+message FindAllPolicyAndTermsRequest {
+    userToken.User user = 1;
+}
+
+message FindPolicyAndTermByIdRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message FindAllPolicyAndTermsResponse {
+    repeated PolicyAndTerm policy_and_terms = 1;
+}

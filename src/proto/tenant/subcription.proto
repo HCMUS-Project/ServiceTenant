@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package subscription;
+
+service SubscriptionService {
+    rpc CreateSubscription(CreateSubscriptionRequest) returns (SubscriptionResponse);
+    rpc FindAllSubscriptions(FindAllSubscriptionsRequest) returns (FindAllSubscriptionsResponse);
+    rpc FindSubscriptionById(FindSubscriptionByIdRequest) returns (SubscriptionResponse);
+    rpc UpdateSubscription(UpdateSubscriptionRequest) returns (SubscriptionResponse);
+    rpc DeleteSubscription(DeleteSubscriptionRequest) returns (SubscriptionResponse);
+}
+
+message Subscription {
+    string id = 1;
+    string tenant_id = 2;
+    float value = 3;
+    string next_billing = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+message CreateSubscriptionRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    float value = 3;
+    string next_billing = 4;
+}
+
+message UpdateSubscriptionRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string tenant_id = 3;
+    float value = 4;
+    string next_billing = 5;
+}
+
+message DeleteSubscriptionRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message SubscriptionResponse {
+    Subscription subscription = 1;
+}
+
+message FindAllSubscriptionsRequest {
+    userToken.User user = 1;
+}
+
+message FindSubscriptionByIdRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message FindAllSubscriptionsResponse {
+    repeated Subscription subscriptions = 1;
+}

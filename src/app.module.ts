@@ -9,7 +9,8 @@ import { GrpcExceptionFilter } from './core/response/exception.filter';
 import { ResponseInterceptor } from './core/response/response.interceptor';
 import { CacheModule } from './core/cache/modules/cache.module';
 import { PrismaModule } from './core/prisma/prisma.module';
-import { FeaturesModule } from './features/index.module';
+import { TenantModule } from './features/tenant/tenant.module';
+import { TenantProfileModule } from './features/tenantprofile/tenantprofile.module';
 
 @Module({
     imports: [
@@ -18,7 +19,8 @@ import { FeaturesModule } from './features/index.module';
         ContextModule,
         CacheModule,
         PrismaModule,
-        FeaturesModule,
+        TenantModule,
+        TenantProfileModule,
     ],
     controllers: [AppController],
     providers: [

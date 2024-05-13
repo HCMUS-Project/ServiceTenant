@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package tenant;
+
+service TenantService {
+    rpc CreateTenant(CreateTenantRequest) returns (TenantResponse);
+    rpc FindTenantByDomain(FindTenantByDomainRequest) returns (TenantResponse);
+    rpc FindTenantById(FindTenantByIdRequest) returns (TenantResponse);
+    rpc UpdateTenant(UpdateTenantRequest) returns (TenantResponse);
+    rpc DeleteTenant(DeleteTenantRequest) returns (TenantResponse);
+}
+
+message Tenant {
+    string id = 1;
+    string owner_id = 2;
+    string name = 3;
+    string domain = 4;
+    bool is_locked = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message CreateTenantRequest {
+    userToken.User user = 1;
+    string owner_id = 2;
+    string name = 3;
+    string domain = 4;
+}
+
+message FindTenantByIdRequest {
+    string id = 1;
+}
+
+message FindTenantByDomainRequest {
+    userToken.User user = 1;
+}
+
+message UpdateTenantRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string owner_id = 3;
+    string name = 4;
+    string domain = 5;
+}
+
+message DeleteTenantRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message TenantResponse {
+    Tenant tenant = 1;
+}

@@ -16,15 +16,9 @@ async function bootstrap() {
         bufferLogs: true,
         options: {
             package: [
-                'ecommerce',
                 'userToken',
-                'category',
-                'product',
-                'productCategory',
-                'voucher',
-                'cart',
-                'review',
-                'order',
+                'tenant',
+                'tenantProfile',
             ],
             protoPath: join(__dirname, '../src/proto/main.proto'),
             url: `${host}:${port}`,

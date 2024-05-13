@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package banner;
+
+service BannerService {
+    rpc CreateBanner(CreateBannerRequest) returns (BannerResponse);
+    rpc FindAllBanners(FindAllBannersRequest) returns (FindAllBannersResponse);
+    rpc FindBannerById(FindBannerByIdRequest) returns (BannerResponse);
+    rpc UpdateBanner(UpdateBannerRequest) returns (BannerResponse);
+    rpc DeleteBanner(DeleteBannerRequest) returns (BannerResponse);
+}
+
+message Banner {
+    string id = 1;
+    string tenant_id = 2;
+    string title = 3;
+    string description = 4;
+    string text_color = 5;
+    string image = 6;
+    string created_at = 7;
+    string updated_at = 8;
+}
+
+message CreateBannerRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string title = 3;
+    string description = 4;
+    string text_color = 5;
+    string image = 6;
+}
+
+message FindAllBannersRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+}
+
+message FindBannerByIdRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string id = 3;
+}
+
+message UpdateBannerRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string id = 3;
+    string title = 4;
+    string description = 5;
+    string text_color = 6;
+    string image = 7;
+}
+
+message DeleteBannerRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string id = 3;
+}
+
+message BannerResponse {
+    Banner banner = 1;
+}
+
+message FindAllBannersResponse {
+    repeated Banner banners = 1;
+}
