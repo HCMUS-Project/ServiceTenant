@@ -1,0 +1,9 @@
+model PolicyAndTerm {
+    id        String   @id @unique @default(uuid())
+    tenant_id String   @unique
+    tenant    Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    policy    String
+    term      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

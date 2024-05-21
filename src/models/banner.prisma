@@ -1,0 +1,11 @@
+model Banner {
+  id           String    @id @default(uuid()) @unique
+  tenant_id    String
+  tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+  title        String
+  description  String
+  text_color   String
+  image        String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

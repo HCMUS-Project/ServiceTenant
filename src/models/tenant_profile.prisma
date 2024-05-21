@@ -1,0 +1,15 @@
+model TenantProfile {
+    id            String   @id @unique @default(uuid())
+    tenant_id     String   @unique
+    tenant        Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    email         String
+    address       String
+    phone_number  String
+    logo          String
+    description   String
+    facebook_url  String
+    instagram_url String
+    youtube_url   String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}

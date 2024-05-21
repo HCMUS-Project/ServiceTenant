@@ -1,0 +1,17 @@
+model ThemeConfig {
+    id                String   @id @unique @default(uuid())
+    tenant_id         String   @unique
+    tenant            Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    header_color      String
+    header_text_color String
+    body_color        String
+    body_text_color   String
+    footer_color      String
+    footer_text_color String
+    text_font         String
+    button_color      String
+    button_text_color String
+    button_radius     Float
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+}

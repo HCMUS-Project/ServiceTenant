@@ -27,7 +27,7 @@ export class TenantService {
 
     async create(dataRequest: ICreateTenantRequest): Promise<ICreateTenantResponse> {
         const { user, ...data } = dataRequest;
-        console.log(dataRequest);
+        // console.log(dataRequest);
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');

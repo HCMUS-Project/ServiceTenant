@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,7 +12,35 @@ datasource commerce_db {
   provider = "postgresql"
   url      = env("POSTGRES_URI")
 }
-
+model Banner {
+  id           String    @id @default(uuid()) @unique
+  tenant_id    String
+  tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+  title        String
+  description  String
+  text_color   String
+  image        String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+model PolicyAndTerm {
+    id        String   @id @unique @default(uuid())
+    tenant_id String   @unique
+    tenant    Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    policy    String
+    term      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+model Subscription {
+    id           String   @id @unique @default(uuid())
+    tenant_id    String   @unique
+    tenant       Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    value        Float
+    next_billing DateTime
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+}
 model Tenant {
   id         String    @id @default(uuid()) @unique
   owner_id   String    @unique
@@ -21,70 +55,35 @@ model Tenant {
   TenantProfile TenantProfile?  // Establish a one-to-one relationship with TenantProfile
   ThemeConfig ThemeConfig?  // Establish a one-to-one relationship with ThemeConfig
 }
-
-model Banner {
-  id           String    @id @default(uuid()) @unique
-  tenant_id    String
-  tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
-  title        String
-  description  String
-  text_color   String
-  image        String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-
-
-model PolicyAndTerm {
-  id         String    @id @default(uuid()) @unique
-  tenant_id  String    @unique
-  tenant     Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
-  policy     String
-  term       String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-}
-
-model Subscription {
-  id           String    @id @default(uuid()) @unique
-  tenant_id    String    @unique
-  tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
-  value        Float
-  next_billing DateTime
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-
 model TenantProfile {
-  id             String    @id @default(uuid()) @unique
-  tenant_id      String   @unique
-  tenant         Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
-  email          String
-  address        String
-  phone_number   String
-  logo           String
-  description    String
-  facebook_url   String
-  instagram_url  String
-  youtube_url    String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+    id            String   @id @unique @default(uuid())
+    tenant_id     String   @unique
+    tenant        Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    email         String
+    address       String
+    phone_number  String
+    logo          String
+    description   String
+    facebook_url  String
+    instagram_url String
+    youtube_url   String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 }
-
 model ThemeConfig {
-  id                 String    @id @default(uuid()) @unique
-  tenant_id          String   @unique
-  tenant             Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
-  header_color       String
-  header_text_color  String
-  body_color         String
-  body_text_color    String
-  footer_color       String
-  footer_text_color  String
-  text_font          String
-  button_color       String
-  button_text_color  String
-  button_radius      Float
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+    id                String   @id @unique @default(uuid())
+    tenant_id         String   @unique
+    tenant            Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    header_color      String
+    header_text_color String
+    body_color        String
+    body_text_color   String
+    footer_color      String
+    footer_text_color String
+    text_font         String
+    button_color      String
+    button_text_color String
+    button_radius     Float
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
 }
