@@ -112,6 +112,7 @@ export class SubscriptionService {
 
     async updateSubscription(data: IUpdateSubscriptionRequest): Promise<IUpdateSubscriptionResponse> {
         const { user, ...dataUpdate } = data;
+        // console.log(data)
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');

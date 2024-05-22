@@ -74,7 +74,7 @@ export class BannerService {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 // Kiểm tra mã lỗi cụ thể từ Prisma
                 if (error.code === 'P2002') {
-                    throw new GrpcAlreadyExistsException('TENANT_PROFILE_ALREADY_EXISTS');
+                    throw new GrpcAlreadyExistsException('BANNER_ALREADY_EXISTS');
                 } else if (error.code === 'P2003') {
                     throw new GrpcInvalidArgumentException('INVALID_TENANT_ID');
                 } else {

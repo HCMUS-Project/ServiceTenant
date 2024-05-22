@@ -14,7 +14,7 @@ service SubscriptionService {
 message Subscription {
     string id = 1;
     string tenant_id = 2;
-    float value = 3;
+    double value = 3;
     string next_billing = 4;
     string created_at = 5;
     string updated_at = 6;
@@ -23,7 +23,7 @@ message Subscription {
 message CreateSubscriptionRequest {
     userToken.User user = 1;
     string tenant_id = 2;
-    float value = 3;
+    double value = 3;
     string next_billing = 4;
 }
 
@@ -36,7 +36,7 @@ message UpdateSubscriptionRequest {
     userToken.User user = 1;
     string id = 2;
     string tenant_id = 3;
-    optional float value = 4;
+    optional double value = 4;
     optional string next_billing = 5;
 }
 

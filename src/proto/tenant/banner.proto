@@ -39,7 +39,7 @@ message FindBannerByTenantIdRequest {
 message UpdateBannerRequest {
     userToken.User user = 1;
     string tenant_id = 2;
-    optional string id = 3;
+    string id = 3;
     optional string title = 4;
     optional string description = 5;
     optional string text_color = 6;
