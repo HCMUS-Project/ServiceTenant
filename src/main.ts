@@ -23,6 +23,7 @@ async function bootstrap() {
                 'policyAndTerm',
                 'subscription',
                 'themeConfig',
+                'vnpayConfig'
             ],
             protoPath: join(__dirname, '../src/proto/main.proto'),
             url: `${host}:${port}`,

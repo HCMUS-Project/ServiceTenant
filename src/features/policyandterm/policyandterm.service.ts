@@ -16,17 +16,19 @@ import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
 import { GrpcAlreadyExistsException, GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
 import { Role } from 'src/proto_build/auth/user_token_pb';
 import { PolicyAndTerm } from 'src/proto_build/tenant/policyandterm_pb';
-import { GrpcInvalidArgumentException, GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
+import {
+    GrpcInvalidArgumentException,
+    GrpcItemNotFoundException,
+} from 'src/common/exceptions/exceptions';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PolicyAndTermService {
-    constructor(private prismaService: PrismaService,
-    ) {}
+    constructor(private prismaService: PrismaService) {}
 
     async create(dataRequest: ICreatePolicyAndTermRequest): Promise<ICreatePolicyAndTermResponse> {
         const { user, ...data } = dataRequest;
-        
+
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
@@ -59,7 +61,7 @@ export class PolicyAndTermService {
                     createdAt: newPolicyAndTerm.createdAt.toISOString(),
                     updatedAt: newPolicyAndTerm.updatedAt.toISOString(),
                 },
-            } ;
+            };
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 // Kiểm tra mã lỗi cụ thể từ Prisma
@@ -79,7 +81,9 @@ export class PolicyAndTermService {
         }
     }
 
-    async findPolicyAndTermByTenantId(data: IFindPolicyAndTermByTenantIdRequest): Promise<IFindPolicyAndTermByIdResponse> {
+    async findPolicyAndTermByTenantId(
+        data: IFindPolicyAndTermByTenantIdRequest,
+    ): Promise<IFindPolicyAndTermByIdResponse> {
         const { tenantId } = data;
         try {
             // find PolicyAndTerm by id and domain
@@ -108,7 +112,9 @@ export class PolicyAndTermService {
         }
     }
 
-    async updatePolicyAndTerm(data: IUpdatePolicyAndTermRequest): Promise<IUpdatePolicyAndTermResponse> {
+    async updatePolicyAndTerm(
+        data: IUpdatePolicyAndTermRequest,
+    ): Promise<IUpdatePolicyAndTermResponse> {
         const { user, ...dataUpdate } = data;
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
@@ -117,7 +123,7 @@ export class PolicyAndTermService {
         try {
             // Find the PolicyAndTerm first
             const PolicyAndTerm = await this.prismaService.policyAndTerm.findUnique({
-                where: { id: dataUpdate.id},
+                where: { id: dataUpdate.id },
             });
 
             // If the PolicyAndTerm does not exist, throw an error
@@ -127,7 +133,7 @@ export class PolicyAndTermService {
 
             // If the PolicyAndTerm exists, perform the update
             const updatedPolicyAndTerm = await this.prismaService.policyAndTerm.update({
-                where: { id: dataUpdate.id},
+                where: { id: dataUpdate.id },
                 data: {
                     policy: dataUpdate.policy,
                     term: dataUpdate.term,
@@ -150,7 +156,9 @@ export class PolicyAndTermService {
         }
     }
 
-    async deletePolicyAndTerm(data: IDeletePolicyAndTermRequest): Promise<IDeletePolicyAndTermResponse> {
+    async deletePolicyAndTerm(
+        data: IDeletePolicyAndTermRequest,
+    ): Promise<IDeletePolicyAndTermResponse> {
         const { user, id } = data;
 
         // check role of user

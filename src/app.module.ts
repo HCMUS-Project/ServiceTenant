@@ -15,6 +15,7 @@ import { BannerModule } from './features/banner/banner.module';
 import { PolicyAndTermModule } from './features/policyandterm/policyandterm.module';
 import { SubscriptionModule } from './features/subcription/subscription.module';
 import { ThemeConfigModule } from './features/themeconfig/themeconfig.module';
+import {VNPayConfigModule} from './features/vnpayconfig/vnpayconfig.module';
 @Module({
     imports: [
         LoggerModule,
@@ -28,6 +29,7 @@ import { ThemeConfigModule } from './features/themeconfig/themeconfig.module';
         PolicyAndTermModule,
         SubscriptionModule,
         ThemeConfigModule,
+        VNPayConfigModule
     ],
     controllers: [AppController],
     providers: [

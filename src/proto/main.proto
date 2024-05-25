@@ -6,6 +6,7 @@ import "tenant/policyandterm.proto";
 import "tenant/subscription.proto";
 import "tenant/tenantprofile.proto";
 import "tenant/themeconfig.proto";
+import "tenant/vnpayconfig.proto";
 
 package tenant;
 

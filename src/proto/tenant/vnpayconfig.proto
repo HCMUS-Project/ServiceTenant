@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package vnpayConfig;
+
+service VNPayConfigService {
+    rpc CreateVNPayConfig(CreateVNPayConfigRequest) returns (VNPayConfigResponse);
+    rpc GetVNPayConfigByTenantId(GetVNPayConfigByTenantIdRequest) returns (VNPayConfigResponse);
+    rpc UpdateVNPayConfig(UpdateVNPayConfigRequest) returns (VNPayConfigResponse);
+    rpc DeleteVNPayConfig(DeleteVNPayConfigRequest) returns (VNPayConfigResponse);
+}
+
+message VNPayConfig {
+    string id = 1;
+    string tenant_id = 2;
+    string tmn_code = 3;
+    string secure_secret = 4;
+    string vnpay_host = 5;
+}
+
+message CreateVNPayConfigRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string tmn_code = 3;
+    string secure_secret = 4;
+    string vnpay_host = 5;
+}
+
+message GetVNPayConfigByTenantIdRequest {
+    string tenant_id = 1;
+}
+
+message UpdateVNPayConfigRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string tenant_id = 3;
+    optional string tmn_code = 4;
+    optional string secure_secret = 5;
+    optional string vnpay_host = 6;
+}
+
+message DeleteVNPayConfigRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message VNPayConfigResponse {
+    VNPayConfig vnpay_config = 1;
+}

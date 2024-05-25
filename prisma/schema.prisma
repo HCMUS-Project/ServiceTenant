@@ -11,8 +11,7 @@ generator client {
 datasource commerce_db {
   provider = "postgresql"
   url      = env("POSTGRES_URI")
-}
-model Banner {
+}model Banner {
   id           String    @id @default(uuid()) @unique
   tenant_id    String
   tenant       Tenant    @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
@@ -42,18 +41,19 @@ model Subscription {
     updatedAt    DateTime @updatedAt
 }
 model Tenant {
-  id         String    @id @default(uuid()) @unique
-  owner_id   String    @unique
-  name       String
-  domain     String    @unique
-  is_locked  Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  banners    Banner[]  // Establish a one-to-many relationship with Banner
-  policies   PolicyAndTerm?  // Establish a one-to-many relationship with PolicyAndTerm
-  subscriptions Subscription?  // Establish a one-to-many relationship with Subscription
-  TenantProfile TenantProfile?  // Establish a one-to-one relationship with TenantProfile
-  ThemeConfig ThemeConfig?  // Establish a one-to-one relationship with ThemeConfig
+  id            String         @id @unique @default(uuid())
+  owner_id      String         @unique
+  name          String
+  domain        String         @unique
+  is_locked     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  banners       Banner[] // Establish a one-to-many relationship with Banner
+  policies      PolicyAndTerm? // Establish a one-to-many relationship with PolicyAndTerm
+  subscriptions Subscription? // Establish a one-to-many relationship with Subscription
+  TenantProfile TenantProfile? // Establish a one-to-one relationship with TenantProfile
+  ThemeConfig   ThemeConfig? // Establish a one-to-one relationship with ThemeConfig
+  VNPayConfig   VNPayConfig?
 }
 model TenantProfile {
     id            String   @id @unique @default(uuid())
@@ -86,4 +86,12 @@ model ThemeConfig {
     button_radius     Float
     createdAt         DateTime @default(now())
     updatedAt         DateTime @updatedAt
+}
+model VNPayConfig {
+    id           String @id @unique @default(uuid())
+    tenant_id    String @unique
+    tenant       Tenant @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    tmn_code      String
+    secure_secret String
+    vnpay_host    String
 }

@@ -1,0 +1,8 @@
+model VNPayConfig {
+    id           String @id @unique @default(uuid())
+    tenant_id    String @unique
+    tenant       Tenant @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
+    tmn_code      String
+    secure_secret String
+    vnpay_host    String
+}
