@@ -145,6 +145,7 @@ export class TenantProfileService {
             if (!TenantProfile) {
                 throw new GrpcItemNotFoundException('TENANT_PROFILE_NOT_FOUND');
             }
+            const logo = await this.supabaseService.uploadImageAndGetLink([dataUpdate.logo]);
 
             // If the TenantProfile exists, perform the update
             const updatedTenantProfile = await this.prismaService.tenantProfile.update({
@@ -152,7 +153,7 @@ export class TenantProfileService {
                 data: {
                     address: dataUpdate.address,
                     phone_number: dataUpdate.phoneNumber,
-                    logo: dataUpdate.logo,
+                    logo: logo[0],
                     description: dataUpdate.description,
                     facebook_url: dataUpdate.facebookUrl,
                     instagram_url: dataUpdate.instagramUrl,
