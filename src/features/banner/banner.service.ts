@@ -137,6 +137,12 @@ export class BannerService {
                 throw new GrpcItemNotFoundException('BANNER_NOT_FOUND');
             }
 
+            let image: string[] = undefined;
+            if (dataUpdate.image)
+            {
+                image = await this.supabaseService.uploadImageAndGetLink([dataUpdate.image]);
+            }
+
             // If the Banner exists, perform the update
             const updatedBanner = await this.prismaService.banner.update({
                 where: { id: dataUpdate.id},
@@ -144,6 +150,7 @@ export class BannerService {
                     title: dataUpdate.title,
                     description: dataUpdate.description,
                     text_color: dataUpdate.textColor,
+                    image: dataUpdate.image? image[0]: dataUpdate.image,
                 },
             });
 
