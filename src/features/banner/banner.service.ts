@@ -37,10 +37,10 @@ export class BannerService {
             if (!data.image) {
                 throw new GrpcInvalidArgumentException('INVALID_IMAGE');
             }
-            // check if category name already exists
+            // check if banner name already exists
             if (
                 await this.prismaService.banner.findFirst({
-                    where: { tenant_id: data.tenantId },
+                    where: { tenant_id: data.tenantId, title: data.title },
                 })
             ) {
                 throw new GrpcAlreadyExistsException('BANNER_ALREADY_EXISTS');
