@@ -1,4 +1,4 @@
-import { CreateBannerRequest, DeleteBannerRequest, FindBannerByTenantIdRequest, Banner, BannerResponse, UpdateBannerRequest } from "src/proto_build/tenant/banner_pb";
+import { CreateBannerRequest, DeleteBannerRequest, FindBannerByTenantIdRequest, Banner, BannerResponse, UpdateBannerRequest, FindAllBannersResponse } from "src/proto_build/tenant/banner_pb";
 
 
 
@@ -10,7 +10,9 @@ export interface ICreateBannerRequest extends CreateBannerRequest.AsObject {}
 export interface ICreateBannerResponse extends BannerResponse.AsObject {}
 
 export interface IFindBannerByTenantIdRequest extends FindBannerByTenantIdRequest.AsObject {}
-export interface IFindBannerByIdResponse extends BannerResponse.AsObject {}
+export interface IFindBannerByTenantIdResponse extends Omit<FindAllBannersResponse.AsObject, 'bannersList'> {
+    banners: IBanner[];
+} 
 
 export interface IUpdateBannerRequest extends UpdateBannerRequest.AsObject {}
 export interface IUpdateBannerResponse extends BannerResponse.AsObject {}

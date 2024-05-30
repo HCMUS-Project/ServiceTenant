@@ -4,12 +4,12 @@ import { BannerService } from './banner.service';
 import {
     ICreateBannerRequest,
     ICreateBannerResponse,
-    IFindBannerByTenantIdRequest,
-    IFindBannerByIdResponse,
+    IFindBannerByTenantIdRequest, 
     IDeleteBannerRequest,
     IDeleteBannerResponse,
     IUpdateBannerRequest,
     IUpdateBannerResponse,
+    IFindBannerByTenantIdResponse,
 } from './interface/banner.interface';
 
 @Controller()
@@ -22,7 +22,7 @@ export class BannerController {
     }
 
     @GrpcMethod('BannerService', 'FindBannerByTenantId')
-    async findByTenantId(data: IFindBannerByTenantIdRequest): Promise<IFindBannerByIdResponse> {
+    async findByTenantId(data: IFindBannerByTenantIdRequest): Promise<IFindBannerByTenantIdResponse> {
         return await this.BannerService.findBannerByTenantId(data);
     }
 

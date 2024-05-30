@@ -6,7 +6,7 @@ package banner;
 
 service BannerService {
     rpc CreateBanner(CreateBannerRequest) returns (BannerResponse);
-    rpc FindBannerByTenantId(FindBannerByTenantIdRequest) returns (BannerResponse);
+    rpc FindBannerByTenantId(FindBannerByTenantIdRequest) returns (FindAllBannersResponse);
     rpc UpdateBanner(UpdateBannerRequest) returns (BannerResponse);
     rpc DeleteBanner(DeleteBannerRequest) returns (BannerResponse);
 }
@@ -32,8 +32,7 @@ message CreateBannerRequest {
 }
 
 message FindBannerByTenantIdRequest {
-    userToken.User user = 1;
-    string tenant_id = 2;
+    string tenant_id = 1;
 }
 
 message UpdateBannerRequest {

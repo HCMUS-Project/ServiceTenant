@@ -43,9 +43,8 @@ message CreateThemeConfigRequest {
     double button_radius = 12;
 }
 
-message FindThemeConfigByTenantIdRequest {
-    userToken.User user = 1;
-    string tenant_id = 2;
+message FindThemeConfigByTenantIdRequest { 
+    string tenant_id = 1;
 }
 
 message UpdateThemeConfigRequest {

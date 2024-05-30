@@ -29,8 +29,7 @@ message CreatePolicyAndTermRequest {
 }
 
 message FindPolicyAndTermByTenantIdRequest {
-    userToken.User user = 1;
-    string tenant_id = 2;
+    string tenant_id = 1;
 }
 
 message UpdatePolicyAndTermRequest {

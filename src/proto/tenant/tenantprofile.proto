@@ -15,28 +15,30 @@ message TenantProfile {
     string id = 1;
     string tenant_id = 2;
     string email = 3;
-    string address = 4;
-    string phone_number = 5;
-    string logo = 6;
-    string description = 7;
-    string facebook_url = 8;
-    string instagram_url = 9;
-    string youtube_url = 10;
-    string created_at = 11;
-    string updated_at = 12;
+    string service_name = 4;
+    string address = 5;
+    string phone_number = 6;
+    string logo = 7;
+    string description = 8;
+    string facebook_url = 9;
+    string instagram_url = 10;
+    string youtube_url = 11;
+    string created_at = 12;
+    string updated_at = 13;
 }
 
 message CreateTenantProfileRequest {
     userToken.User user = 1;
     string tenant_id = 2;
     string email = 3;
-    string address = 4;
-    string phone_number = 5;
-    string logo = 6;
-    string description = 7;
-    string facebook_url = 8;
-    string instagram_url = 9;
-    string youtube_url = 10;
+    string service_name = 4;
+    string address = 5;
+    string phone_number = 6;
+    string logo = 7;
+    string description = 8;
+    string facebook_url = 9;
+    string instagram_url = 10;
+    string youtube_url = 11;
 }
 
 
@@ -50,13 +52,14 @@ message UpdateTenantProfileRequest {
     string id = 2;
     string tenant_id = 3;
     optional string email = 4;
-    optional string address = 5;
-    optional string phone_number = 6;
-    optional string logo = 7;
-    optional string description = 8;
-    optional string facebook_url = 9;
-    optional string instagram_url = 10;
-    optional string youtube_url = 11;
+    optional string service_name = 5;
+    optional string address = 6;
+    optional string phone_number = 7;
+    optional string logo = 8;
+    optional string description = 9;
+    optional string facebook_url = 10;
+    optional string instagram_url = 11;
+    optional string youtube_url = 12;
 }
 
 message DeleteTenantProfileRequest {

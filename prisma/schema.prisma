@@ -60,6 +60,7 @@ model TenantProfile {
     tenant_id     String   @unique
     tenant        Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
     email         String
+    service_name  String   @default("default service name")
     address       String
     phone_number  String
     logo          String

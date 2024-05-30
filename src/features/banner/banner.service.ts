@@ -4,31 +4,35 @@ import {
     ICreateBannerRequest,
     ICreateBannerResponse,
     IFindBannerByTenantIdRequest,
-    IFindBannerByIdResponse,
     IDeleteBannerRequest,
     IDeleteBannerResponse,
     IUpdateBannerRequest,
     IUpdateBannerResponse,
     IBannerResponse,
+    IFindBannerByTenantIdResponse,
 } from './interface/banner.interface';
 
 import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
 import { GrpcAlreadyExistsException, GrpcPermissionDeniedException } from 'nestjs-grpc-exceptions';
 import { Role } from 'src/proto_build/auth/user_token_pb';
 import { Banner } from 'src/proto_build/tenant/banner_pb';
-import { GrpcInvalidArgumentException, GrpcItemNotFoundException } from 'src/common/exceptions/exceptions';
+import {
+    GrpcInvalidArgumentException,
+    GrpcItemNotFoundException,
+} from 'src/common/exceptions/exceptions';
 import { SupabaseService } from 'src/util/supabase/supabase.service';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BannerService {
-    constructor(private prismaService: PrismaService,
+    constructor(
+        private prismaService: PrismaService,
         private supabaseService: SupabaseService,
     ) {}
 
     async create(dataRequest: ICreateBannerRequest): Promise<ICreateBannerResponse> {
         const { user, ...data } = dataRequest;
-        
+
         // check role of user
         if (user.role.toString() !== getEnumKeyByEnumValue(Role, Role.TENANT)) {
             throw new GrpcPermissionDeniedException('PERMISSION_DENIED');
@@ -69,7 +73,7 @@ export class BannerService {
                     createdAt: newBanner.createdAt.toISOString(),
                     updatedAt: newBanner.updatedAt.toISOString(),
                 },
-            } ;
+            };
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 // Kiểm tra mã lỗi cụ thể từ Prisma
@@ -89,32 +93,33 @@ export class BannerService {
         }
     }
 
-    async findBannerByTenantId(data: IFindBannerByTenantIdRequest): Promise<IFindBannerByIdResponse> {
+    async findBannerByTenantId(
+        data: IFindBannerByTenantIdRequest,
+    ): Promise<IFindBannerByTenantIdResponse> {
         const { tenantId } = data;
         try {
             // find Banner by id and domain
-            const Banner = await this.prismaService.banner.findFirst({
+            const banners = await this.prismaService.banner.findMany({
                 where: { tenant_id: tenantId },
             });
 
             // check if Banner not exists
-            if (!Banner) {
+            if (banners.length === 0) {
                 throw new GrpcItemNotFoundException('BANNER_NOT_FOUND');
             }
 
             return {
-                banner: {
-                    id: Banner.id,
-                    tenantId: Banner.tenant_id,
-                    title: Banner.title,
-                    description: Banner.description,
-                    textColor: Banner.text_color,
-                    image: Banner.image,
-                    createdAt: Banner.createdAt.toISOString(),
-                    updatedAt: Banner.updatedAt.toISOString(),
-                },
-                // expireAt: newBanner.expire_at
-            } as IBannerResponse;
+                banners: banners.map(banner => ({
+                    id: banner.id,
+                    tenantId: banner.tenant_id,
+                    title: banner.title,
+                    description: banner.description,
+                    textColor: banner.text_color,
+                    image: banner.image,
+                    createdAt: banner.createdAt.toISOString(),
+                    updatedAt: banner.updatedAt.toISOString(),
+                })),
+            };
         } catch (error) {
             throw error;
         }
@@ -129,7 +134,7 @@ export class BannerService {
         try {
             // Find the Banner first
             const Banner = await this.prismaService.banner.findUnique({
-                where: { id: dataUpdate.id},
+                where: { id: dataUpdate.id },
             });
 
             // If the Banner does not exist, throw an error
@@ -138,19 +143,18 @@ export class BannerService {
             }
 
             let image: string[] = undefined;
-            if (dataUpdate.image)
-            {
+            if (dataUpdate.image) {
                 image = await this.supabaseService.uploadImageAndGetLink([dataUpdate.image]);
             }
 
             // If the Banner exists, perform the update
             const updatedBanner = await this.prismaService.banner.update({
-                where: { id: dataUpdate.id},
+                where: { id: dataUpdate.id },
                 data: {
                     title: dataUpdate.title,
                     description: dataUpdate.description,
                     text_color: dataUpdate.textColor,
-                    image: dataUpdate.image? image[0]: dataUpdate.image,
+                    image: dataUpdate.image ? image[0] : dataUpdate.image,
                 },
             });
 
