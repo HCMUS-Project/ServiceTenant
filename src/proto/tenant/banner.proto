@@ -32,7 +32,8 @@ message CreateBannerRequest {
 }
 
 message FindBannerByTenantIdRequest {
-    string tenant_id = 1;
+    string domain = 1;
+    string tenant_id = 2;
 }
 
 message UpdateBannerRequest {

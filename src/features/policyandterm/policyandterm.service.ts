@@ -84,9 +84,24 @@ export class PolicyAndTermService {
     async findPolicyAndTermByTenantId(
         data: IFindPolicyAndTermByTenantIdRequest,
     ): Promise<IFindPolicyAndTermByIdResponse> {
-        const { tenantId } = data;
+        let { domain, tenantId } = data;
         try {
             // find PolicyAndTerm by id and domain
+
+            if (tenantId === undefined)
+            {
+                const Tenant = await this.prismaService.tenant.findFirst({
+                    where: { domain: domain },
+                });
+    
+                // check if Tenant not exists
+                if (!Tenant) {
+                    throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
+                }
+
+                tenantId = Tenant.id
+            }
+
             const PolicyAndTerm = await this.prismaService.policyAndTerm.findFirst({
                 where: { tenant_id: tenantId },
             });

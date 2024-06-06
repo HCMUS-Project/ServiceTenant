@@ -29,7 +29,8 @@ message CreatePolicyAndTermRequest {
 }
 
 message FindPolicyAndTermByTenantIdRequest {
-    string tenant_id = 1;
+    string domain = 1;
+    string tenant_id = 2;
 }
 
 message UpdatePolicyAndTermRequest {

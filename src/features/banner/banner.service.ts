@@ -96,9 +96,23 @@ export class BannerService {
     async findBannerByTenantId(
         data: IFindBannerByTenantIdRequest,
     ): Promise<IFindBannerByTenantIdResponse> {
-        const { tenantId } = data;
+        let {domain, tenantId } = data;
         try {
-            // find Banner by id and domain
+            // find Banner by domain or Id
+            if (tenantId === undefined)
+            {
+                const Tenant = await this.prismaService.tenant.findFirst({
+                    where: { domain: domain },
+                });
+                
+                // check if Tenant not exists
+                if (!Tenant) {
+                    throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
+                }
+
+                tenantId = Tenant.id
+            }
+
             const banners = await this.prismaService.banner.findMany({
                 where: { tenant_id: tenantId },
             });

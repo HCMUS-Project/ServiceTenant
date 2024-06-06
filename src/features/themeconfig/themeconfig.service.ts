@@ -98,9 +98,24 @@ export class ThemeConfigService {
     }
 
     async findThemeConfigByTenantId(data: IFindThemeConfigByTenantIdRequest): Promise<IFindThemeConfigByIdResponse> {
-        const { tenantId } = data;
+        let {domain, tenantId } = data;
         try {
             // find ThemeConfig by id and domain
+
+            if (tenantId === undefined)
+            {
+                const Tenant = await this.prismaService.tenant.findFirst({
+                    where: { domain: domain },
+                });
+    
+                // check if Tenant not exists
+                if (!Tenant) {
+                    throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
+                }
+
+                tenantId = Tenant.id
+            }
+
             const ThemeConfig = await this.prismaService.themeConfig.findFirst({
                 where: { tenant_id: tenantId },
             });
