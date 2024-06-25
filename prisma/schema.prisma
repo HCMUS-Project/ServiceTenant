@@ -22,6 +22,18 @@ datasource commerce_db {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
+model Plan {
+    name                        String         @unique
+    price_per_month             Float
+    limit_of_month              Int
+    limit_of_services           Int
+    limit_of_employees          Int
+    limit_of_products           Int
+    fee_percent_per_transaction Float
+    subscription                Subscription[]
+    createdAt                   DateTime       @default(now())
+    updatedAt                   DateTime       @updatedAt
+}
 model PolicyAndTerm {
     id        String   @id @unique @default(uuid())
     tenant_id String   @unique
@@ -33,9 +45,12 @@ model PolicyAndTerm {
 }
 model Subscription {
     id           String   @id @unique @default(uuid())
-    tenant_id    String   @unique
+    tenant_id    String   
     tenant       Tenant   @relation(fields: [tenant_id], references: [id]) // Define the relation pointing to Tenant's id
-    value        Float
+    total_value  Float
+    stage        String
+    plan_name    String
+    plan         Plan?    @relation(fields: [plan_name], references: [name])
     next_billing DateTime
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
@@ -50,7 +65,7 @@ model Tenant {
   updatedAt     DateTime       @updatedAt
   banners       Banner[] // Establish a one-to-many relationship with Banner
   policies      PolicyAndTerm? // Establish a one-to-many relationship with PolicyAndTerm
-  subscriptions Subscription? // Establish a one-to-many relationship with Subscription
+  subscriptions Subscription[] // Establish a one-to-many relationship with Subscription
   TenantProfile TenantProfile? // Establish a one-to-one relationship with TenantProfile
   ThemeConfig   ThemeConfig? // Establish a one-to-one relationship with ThemeConfig
   VNPayConfig   VNPayConfig?

@@ -4,12 +4,15 @@ import { SubscriptionService } from './subscription.service';
 import {
     ICreateSubscriptionRequest,
     ICreateSubscriptionResponse,
-    IFindSubscriptionByTenantIdRequest,
-    IFindSubscriptionByIdResponse,
-    IDeleteSubscriptionRequest,
-    IDeleteSubscriptionResponse,
-    IUpdateSubscriptionRequest,
-    IUpdateSubscriptionResponse,
+    IUpdateSubscriptionStageByAdminRequest,
+    IUpdateSubscriptionStageByAdminResponse,
+    IFindAllSubscriptionByQueryRequest,
+    IFindAllSubscriptionResponse,
+    IFindPlansRequest,
+    IFindPlansResponse,
+    ICancelSubscriptionRequest,
+    ICancelSubscriptionResponse,
+    IFindAllSubscriptionByQueryAdminRequest,
 } from './interface/subscription.interface';
 
 @Controller()
@@ -21,18 +24,36 @@ export class SubscriptionController {
         return await this.SubscriptionService.create(data);
     }
 
-    @GrpcMethod('SubscriptionService', 'FindSubscriptionByTenantId')
-    async findByTenantId(data: IFindSubscriptionByTenantIdRequest): Promise<IFindSubscriptionByIdResponse> {
-        return await this.SubscriptionService.findSubscriptionByTenantId(data);
+    @GrpcMethod('SubscriptionService', 'FindAllSubscriptionByQuery')
+    async findAllSubscriptionByQuery(
+        data: IFindAllSubscriptionByQueryRequest,
+    ): Promise<IFindAllSubscriptionResponse> {
+        return await this.SubscriptionService.findAllSubscriptionByQuery(data);
     }
 
-    @GrpcMethod('SubscriptionService', 'UpdateSubscription')
-    async updateSubscription(data: IUpdateSubscriptionRequest): Promise<IUpdateSubscriptionResponse> {
-        return await this.SubscriptionService.updateSubscription(data);
+    @GrpcMethod('SubscriptionService', 'FindAllSubscriptionByQueryAdmin')
+    async findAllSubscriptionByQueryAdmin(
+        data: IFindAllSubscriptionByQueryAdminRequest,
+    ): Promise<IFindAllSubscriptionResponse> {
+        return await this.SubscriptionService.findAllSubscriptionByQueryAdmin(data);
     }
 
-    @GrpcMethod('SubscriptionService', 'DeleteSubscription')
-    async deleteSubscription(data: IDeleteSubscriptionRequest): Promise<IDeleteSubscriptionResponse> {
-        return await this.SubscriptionService.deleteSubscription(data);
+    @GrpcMethod('SubscriptionService', 'FindPlans')
+    async findPlans(data: IFindPlansRequest): Promise<IFindPlansResponse> {
+        return await this.SubscriptionService.findPlans(data);
+    }
+
+    @GrpcMethod('SubscriptionService', 'UpdateSubscriptionStageByAdmin')
+    async updateSubscriptionStageByAdmin(
+        data: IUpdateSubscriptionStageByAdminRequest,
+    ): Promise<IUpdateSubscriptionStageByAdminResponse> {
+        return await this.SubscriptionService.updateSubscriptionStageByAdmin(data);
+    }
+
+    @GrpcMethod('SubscriptionService', 'CancelSubscription')
+    async cancelSubscription(
+        data: ICancelSubscriptionRequest,
+    ): Promise<ICancelSubscriptionResponse> {
+        return await this.SubscriptionService.cancelSubscription(data);
     }
 }

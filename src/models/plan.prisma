@@ -1,0 +1,12 @@
+model Plan {
+    name                        String         @unique
+    price_per_month             Float
+    limit_of_month              Int
+    limit_of_services           Int
+    limit_of_employees          Int
+    limit_of_products           Int
+    fee_percent_per_transaction Float
+    subscription                Subscription[]
+    createdAt                   DateTime       @default(now())
+    updatedAt                   DateTime       @updatedAt
+}

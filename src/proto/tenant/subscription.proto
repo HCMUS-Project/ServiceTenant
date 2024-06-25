@@ -6,46 +6,85 @@ package subscription;
 
 service SubscriptionService {
     rpc CreateSubscription(CreateSubscriptionRequest) returns (SubscriptionResponse);
-    rpc FindSubscriptionByTenantId(FindSubscriptionByTenantIdRequest) returns (SubscriptionResponse);
-    rpc UpdateSubscription(UpdateSubscriptionRequest) returns (SubscriptionResponse);
-    rpc DeleteSubscription(DeleteSubscriptionRequest) returns (SubscriptionResponse);
+    rpc FindAllSubscriptionByQuery(FindAllSubscriptionByQueryRequest) returns (FindAllSubscriptionResponse);
+    rpc FindAllSubscriptionByQueryAdmin(FindAllSubscriptionByQueryAdminRequest) returns (FindAllSubscriptionResponse);
+    rpc FindPlans(FindPlansRequest) returns (FindPlansResponse);
+    rpc UpdateSubscriptionStageByAdmin(UpdateSubscriptionStageByAdminRequest) returns (SubscriptionResponse);
+    rpc CancelSubscription(CancelSubscriptionRequest) returns (SubscriptionResponse);
+}
+
+enum Stage{
+    PENDING = 0;
+    SUCCESS = 1;
+    FAILED = 2;
+    CANCELLED = 3;
+}
+
+message Plan {
+    string name = 1;
+    double price_per_month = 2;
+    int32 limit_of_month = 3;
+    int32 limit_of_services = 4;
+    int32 limit_of_employees = 5;
+    int32 limit_of_products = 6;
+    float fee_percent_per_transaction = 7;
 }
 
 message Subscription {
     string id = 1;
     string tenant_id = 2;
-    double value = 3;
-    string next_billing = 4;
-    string created_at = 5;
-    string updated_at = 6;
+    double total_value = 3;
+    string stage = 4;
+    Plan plan = 5;
+    string next_billing = 6;
+    string created_at = 7;
+    string updated_at = 8;
+
 }
 
 message CreateSubscriptionRequest {
     userToken.User user = 1;
     string tenant_id = 2;
-    double value = 3;
-    string next_billing = 4;
+    string plan_name = 3;
 }
 
-message FindSubscriptionByTenantIdRequest {
+message FindAllSubscriptionByQueryRequest {
     userToken.User user = 1;
     string tenant_id = 2;
+    optional Stage stage = 3;
 }
 
-message UpdateSubscriptionRequest {
+message FindAllSubscriptionByQueryAdminRequest{
+    userToken.User user = 1;
+    optional string domain = 2;
+    optional Stage stage = 3;
+    optional string plan_name = 4;
+}
+
+message FindAllSubscriptionResponse { 
+    repeated Subscription subscriptions = 1;
+} 
+
+message UpdateSubscriptionStageByAdminRequest {
     userToken.User user = 1;
     string id = 2;
     string tenant_id = 3;
-    optional double value = 4;
-    optional string next_billing = 5;
+    Stage stage = 4;
 }
 
-message DeleteSubscriptionRequest {
+message CancelSubscriptionRequest {
     userToken.User user = 1;
     string id = 2;
-}
+} 
 
 message SubscriptionResponse {
     Subscription subscription = 1;
 }
 
+message FindPlansRequest{
+    
+}
+
+message FindPlansResponse{
+    repeated Plan plans = 1;
+}

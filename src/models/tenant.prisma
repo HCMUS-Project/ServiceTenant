@@ -8,7 +8,7 @@ model Tenant {
   updatedAt     DateTime       @updatedAt
   banners       Banner[] // Establish a one-to-many relationship with Banner
   policies      PolicyAndTerm? // Establish a one-to-many relationship with PolicyAndTerm
-  subscriptions Subscription? // Establish a one-to-many relationship with Subscription
+  subscriptions Subscription[] // Establish a one-to-many relationship with Subscription
   TenantProfile TenantProfile? // Establish a one-to-one relationship with TenantProfile
   ThemeConfig   ThemeConfig? // Establish a one-to-one relationship with ThemeConfig
   VNPayConfig   VNPayConfig?
