@@ -55,7 +55,7 @@ export class CustomerService {
                         report => report.email === user.email,
                     );
                     const reportBooking = listBookings.reportBooking.find(
-                        report => report.totalBooking
+                        report => report.email === user.email,
                     )
                     return {
                         name: user.name,
