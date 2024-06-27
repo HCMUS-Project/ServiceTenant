@@ -7,10 +7,15 @@ import "tenant/subscription.proto";
 import "tenant/tenantprofile.proto";
 import "tenant/themeconfig.proto";
 import "tenant/vnpayconfig.proto";
+import "tenant/customers.proto";
+import "users/profile.proto";
+import "users/order.proto";
+import "users/booking.proto";
 
 package tenant;
 
 service AppService {
+
   rpc FindOne (HeroById) returns (Hero) {}
 }
 

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package booking;
+
+service BookingService { 
+    rpc GetBookingsReportOfListUsers(GetBookingsReportOfListUsersRequest) returns (GetBookingsReportOfListUsersResponse) {}
+} 
+message GetBookingsReportOfListUsersRequest{
+    userToken.User user = 1;
+    repeated string emails = 2;
+}
+
+message BookingReportOfUser{
+    string email = 1;
+    int32 total_booking = 2;
+}
+ 
+message GetBookingsReportOfListUsersResponse{
+    repeated BookingReportOfUser report_booking = 1;
+}

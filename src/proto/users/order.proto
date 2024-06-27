@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package order; 
+
+service OrderService {
+    rpc GetOrdersReportOfListUsers(GetOrdersReportOfListUsersRequest) returns (GetOrdersReportOfListUsersResponse) {}
+} 
+
+message GetOrdersReportOfListUsersRequest{
+    userToken.User user = 1;
+    repeated string emails = 2;
+}
+
+message OrderReportOfUser{
+    string email = 1;
+    int32 total_order = 2;
+}
+
+message GetOrdersReportOfListUsersResponse{
+    repeated OrderReportOfUser report_orders = 1;
+}

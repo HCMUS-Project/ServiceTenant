@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "auth/user_token.proto";
+
+package customers;
+
+service CustomersService {
+    rpc GetAllBookingsOrdersNumbers(GetAllBookingsOrdersNumbersRequest) returns (GetAllBookingsOrdersNumbersResponse);
+}
+
+message Customer {
+    string name = 1;
+    string address = 2;
+    string phone = 3;
+    string email = 4;
+    int32 total_bookings = 5;
+    int32 total_orders = 6;
+}
+
+message GetAllBookingsOrdersNumbersRequest {
+    userToken.User user = 1; 
+}
+
+message GetAllBookingsOrdersNumbersResponse {
+    repeated Customer customers = 1;
+}

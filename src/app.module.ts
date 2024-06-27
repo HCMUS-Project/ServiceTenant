@@ -16,6 +16,8 @@ import { PolicyAndTermModule } from './features/policyandterm/policyandterm.modu
 import { SubscriptionModule } from './features/subcription/subscription.module';
 import { ThemeConfigModule } from './features/themeconfig/themeconfig.module';
 import {VNPayConfigModule} from './features/vnpayconfig/vnpayconfig.module';
+import {CustomersModule} from './features/customers/customers.module';
+import {ExternalServiceModule} from './features/externalServices/external.module';
 @Module({
     imports: [
         LoggerModule,
@@ -29,7 +31,9 @@ import {VNPayConfigModule} from './features/vnpayconfig/vnpayconfig.module';
         PolicyAndTermModule,
         SubscriptionModule,
         ThemeConfigModule,
-        VNPayConfigModule
+        VNPayConfigModule,
+        CustomersModule,
+        ExternalServiceModule
     ],
     controllers: [AppController],
     providers: [
