@@ -99,6 +99,7 @@ export class SubscriptionService {
                     nextBilling: newSubscription.next_billing.toISOString(),
                     createdAt: newSubscription.createdAt.toISOString(),
                     updatedAt: newSubscription.updatedAt.toISOString(),
+                    domain: user.domain,
                 },
             };
         } catch (error) {
@@ -136,6 +137,11 @@ export class SubscriptionService {
                 where: { tenant_id: tenantId, stage: stageConvert },
                 include: {
                     plan: true,
+                    tenant: {
+                        select: {
+                            domain: true,
+                        },
+                    },
                 },
                 orderBy: {
                     createdAt: 'desc',
@@ -157,6 +163,7 @@ export class SubscriptionService {
                         limitOfProducts: subcription.plan.limit_of_products,
                         feePercentPerTransaction: subcription.plan.fee_percent_per_transaction,
                     },
+                    domain: subcription.tenant.domain,
                     nextBilling: subcription.next_billing.toISOString(),
                     createdAt: subcription.createdAt.toISOString(),
                     updatedAt: subcription.updatedAt.toISOString(),
@@ -199,6 +206,11 @@ export class SubscriptionService {
                 },
                 include: {
                     plan: true,
+                    tenant: {
+                        select: {
+                            domain: true,
+                        },
+                    },
                 },
                 orderBy: {
                     createdAt: 'desc',
@@ -211,6 +223,7 @@ export class SubscriptionService {
                     tenantId: subcription.tenant_id,
                     totalValue: subcription.total_value,
                     stage: subcription.stage,
+                    domain: subcription.tenant.domain,
                     plan: {
                         name: subcription.plan.name,
                         pricePerMonth: subcription.plan.price_per_month,
@@ -283,6 +296,11 @@ export class SubscriptionService {
                 },
                 include: {
                     plan: true,
+                    tenant: {
+                        select: {
+                            domain: true,
+                        },
+                    },
                 },
             });
 
@@ -302,6 +320,7 @@ export class SubscriptionService {
                         feePercentPerTransaction:
                             updatedSubscription.plan.fee_percent_per_transaction,
                     },
+                    domain: updatedSubscription.tenant.domain,
                     nextBilling: updatedSubscription.next_billing.toISOString(),
                     createdAt: updatedSubscription.createdAt.toISOString(),
                     updatedAt: updatedSubscription.updatedAt.toISOString(),
@@ -341,6 +360,9 @@ export class SubscriptionService {
                 },
                 include: {
                     plan: true,
+                    tenant: {
+                        select: { domain: true },
+                    },
                 },
             });
 
@@ -360,6 +382,7 @@ export class SubscriptionService {
                         feePercentPerTransaction:
                             updatedSubscription.plan.fee_percent_per_transaction,
                     },
+                    domain: updatedSubscription.tenant.domain,
                     nextBilling: updatedSubscription.next_billing.toISOString(),
                     createdAt: updatedSubscription.createdAt.toISOString(),
                     updatedAt: updatedSubscription.updatedAt.toISOString(),

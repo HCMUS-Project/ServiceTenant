@@ -39,7 +39,7 @@ message Subscription {
     string next_billing = 6;
     string created_at = 7;
     string updated_at = 8;
-
+    string domain = 9;
 }
 
 message CreateSubscriptionRequest {
