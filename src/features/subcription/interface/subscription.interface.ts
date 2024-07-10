@@ -1,6 +1,7 @@
 import {
     CancelSubscriptionRequest,
     CreateSubscriptionRequest,
+    CreateSubscriptionResponse,
     FindAllSubscriptionByQueryAdminRequest,
     FindAllSubscriptionByQueryRequest,
     FindAllSubscriptionResponse, 
@@ -18,7 +19,7 @@ export interface IPlan extends Plan.AsObject {}
 export interface ISubscriptionResponse extends SubscriptionResponse.AsObject {}
 
 export interface ICreateSubscriptionRequest extends CreateSubscriptionRequest.AsObject {}
-export interface ICreateSubscriptionResponse extends SubscriptionResponse.AsObject {}
+export interface ICreateSubscriptionResponse extends CreateSubscriptionResponse.AsObject {}
 
 export interface IFindAllSubscriptionByQueryRequest
     extends FindAllSubscriptionByQueryRequest.AsObject {}

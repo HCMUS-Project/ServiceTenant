@@ -5,7 +5,7 @@ import "auth/user_token.proto";
 package subscription;
 
 service SubscriptionService {
-    rpc CreateSubscription(CreateSubscriptionRequest) returns (SubscriptionResponse);
+    rpc CreateSubscription(CreateSubscriptionRequest) returns (CreateSubscriptionResponse);
     rpc FindAllSubscriptionByQuery(FindAllSubscriptionByQueryRequest) returns (FindAllSubscriptionResponse);
     rpc FindAllSubscriptionByQueryAdmin(FindAllSubscriptionByQueryAdminRequest) returns (FindAllSubscriptionResponse);
     rpc FindPlans(FindPlansRequest) returns (FindPlansResponse);
@@ -46,6 +46,13 @@ message CreateSubscriptionRequest {
     userToken.User user = 1;
     string tenant_id = 2;
     string plan_name = 3;
+    string payment_method = 4;
+    string payment_callback_url = 5;
+}
+
+message CreateSubscriptionResponse {
+    Subscription subscription = 1;
+    string payment_url = 2;
 }
 
 message FindAllSubscriptionByQueryRequest {

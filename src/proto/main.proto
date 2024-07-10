@@ -11,6 +11,7 @@ import "tenant/customers.proto";
 import "users/profile.proto";
 import "users/order.proto";
 import "users/booking.proto";
+import "services/payment.proto";
 
 package tenant;
 

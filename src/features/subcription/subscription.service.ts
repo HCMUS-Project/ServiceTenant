@@ -26,12 +26,15 @@ import {
 import { SupabaseService } from 'src/util/supabase/supabase.service';
 import { Prisma } from '@prisma/client';
 import { Tenant } from 'src/proto_build/tenant/tenant_pb';
+import { ICreatePaymentUrlRequest } from '../externalServices/payment_service/payment.interface';
+import {PaymentTenantService} from '../externalServices/payment_service/payment.service';
 
 @Injectable()
 export class SubscriptionService {
     constructor(
         private prismaService: PrismaService,
         private supabaseService: SupabaseService,
+        private paymentTenantService: PaymentTenantService,
     ) {}
 
     async create(dataRequest: ICreateSubscriptionRequest): Promise<ICreateSubscriptionResponse> {
@@ -81,6 +84,19 @@ export class SubscriptionService {
                 },
             });
 
+            // Call payment service to create payment url
+            const dataCreatePaymentUrl: ICreatePaymentUrlRequest = {
+                amount: plan.price_per_month * plan.limit_of_month,
+                description: 'Payment for Tenant Subscription',
+                orderBookingId: [],
+                orderProductsId: [newSubscription.id],
+                paymentMethodId: data.paymentMethod,
+                // vnpReturnUrl: this.configService.get('vnpayCallback'),
+                vnpReturnUrl: data.paymentCallbackUrl,
+                user: user,
+            };
+            const url = await this.paymentTenantService.createPaymentUrl(dataCreatePaymentUrl);
+
             return {
                 subscription: {
                     id: newSubscription.id,
@@ -101,6 +117,7 @@ export class SubscriptionService {
                     updatedAt: newSubscription.updatedAt.toISOString(),
                     domain: user.domain,
                 },
+                paymentUrl: url.paymentUrl
             };
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {

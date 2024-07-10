@@ -67,7 +67,27 @@ import { ProfileUserService } from './profileUsers/profile.service';
             },
             inject: [ConfigService],
         },
+        {
+            provide: 'GRPC_TENANT_PAYMENTS',
+            useFactory: (configService: ConfigService) => {
+                return ClientProxyFactory.create({
+                    transport: Transport.GRPC,
+                    options: {
+                        package: ['payment'],
+                        protoPath: join(__dirname, '../../../src/proto/main.proto'),
+                        url: configService.get<string>('PAYMENT_SERVICE_URL'),
+                        loader: {
+                            enums: String,
+                            objects: true,
+                            arrays: true,
+                            includeDirs: [join(__dirname, '../../../src/proto/')],
+                        },
+                    },
+                });
+            },
+            inject: [ConfigService],
+        },
     ],
-    exports: ['GRPC_TENANT_AUTH', 'GRPC_TENANT_ORDERS', 'GRPC_TENANT_BOOKINGS'],
+    exports: ['GRPC_TENANT_AUTH', 'GRPC_TENANT_ORDERS', 'GRPC_TENANT_BOOKINGS', 'GRPC_TENANT_PAYMENTS'],
 })
 export class ExternalServiceModule {}
