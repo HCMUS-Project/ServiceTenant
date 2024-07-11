@@ -4,8 +4,15 @@ import "auth/user_token.proto";
 
 package customers;
 
+enum DateType {
+    WEEK = 0;
+    MONTH = 1;
+    YEAR = 2;
+}
+
 service CustomersService {
     rpc GetAllBookingsOrdersNumbers(GetAllBookingsOrdersNumbersRequest) returns (GetAllBookingsOrdersNumbersResponse);
+    rpc GetUsersReportByDate(GetUsersReportByDateRequest) returns (GetUsersReportByDateResponse);
 }
 
 message Customer {
@@ -23,4 +30,20 @@ message GetAllBookingsOrdersNumbersRequest {
 
 message GetAllBookingsOrdersNumbersResponse {
     repeated Customer customers = 1;
+}
+
+message GetUsersReportByDateRequest{
+    userToken.User user = 1;
+    DateType type = 2;
+}
+
+message UserReportByDate {
+    string type = 1;
+    int32 total_users = 2;
+}
+
+message GetUsersReportByDateResponse{
+    // int32 value = 1;
+    int32 total = 1;
+    repeated UserReportByDate reports = 2;
 }
