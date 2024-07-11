@@ -45,5 +45,5 @@ message UserReportByDate {
 message GetUsersReportByDateResponse{
     // int32 value = 1;
     int32 total = 1;
-    repeated UserReportByDate reports = 2;
+    repeated UserReportByDate report = 2;
 }

@@ -157,7 +157,7 @@ export class CustomerService {
             } 
 
             return {
-                reports: reportUsers,
+                report: reportUsers,
                 total: totalUsers,
             };
         } catch (error) {

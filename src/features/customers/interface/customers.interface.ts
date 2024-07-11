@@ -22,6 +22,6 @@ export interface IUserReportByDate extends UserReportByDate.AsObject {}
 export interface IGetUsersReportByDateRequest extends GetUsersReportByDateRequest.AsObject {}
 
 export interface IGetUsersReportByDateResponse
-    extends Omit<GetUsersReportByDateResponse.AsObject, 'reportsList'> {
-    reports: IUserReportByDate[];
+    extends Omit<GetUsersReportByDateResponse.AsObject, 'reportList'> {
+    report: IUserReportByDate[];
 }
