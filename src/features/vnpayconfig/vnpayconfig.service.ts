@@ -13,12 +13,12 @@ import {
     ICreateVNPayConfigResponse,
     IDeleteVNPayConfigRequest,
     IDeleteVNPayConfigResponse,
-    IGetVNPayConfigByTenantIdRequest,
+    IGetVNPayConfigByDomainRequest,
     IGetVNPayConfigByTenantIdResponse,
     IUpdateVNPayConfigRequest,
     IUpdateVNPayConfigResponse,
 } from './interface/vnpayconfig.interface';
-import {getEnumKeyByEnumValue} from 'src/util/convert_enum/get_key_enum';
+import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
 
 @Injectable()
 export class VNPayConfigService {
@@ -34,9 +34,9 @@ export class VNPayConfigService {
 
         try {
             if (
-                !await this.prismaService.tenant.findFirst({
+                !(await this.prismaService.tenant.findFirst({
                     where: { id: dataCreate.tenantId },
-                })
+                }))
             ) {
                 throw new GrpcItemNotFoundException('TENANT_ID_NOT_FOUND');
             }
@@ -72,12 +72,12 @@ export class VNPayConfigService {
     }
 
     async getVNPayConfigByTenantId(
-        data: IGetVNPayConfigByTenantIdRequest,
+        data: IGetVNPayConfigByDomainRequest,
     ): Promise<IGetVNPayConfigByTenantIdResponse> {
-        const { tenantId } = data;
+        const { domain } = data;
         try {
             const vnpayConfig = await this.prismaService.vNPayConfig.findFirst({
-                where: { tenant_id: tenantId },
+                where: { tenant: { domain: domain } },
             });
 
             if (!vnpayConfig) {
@@ -113,9 +113,9 @@ export class VNPayConfigService {
                 throw new GrpcItemNotFoundException('VN_PAY_CONFIG_NOT_FOUND');
             }
             if (
-                !await this.prismaService.tenant.findFirst({
+                !(await this.prismaService.tenant.findFirst({
                     where: { id: updateData.tenantId },
-                })
+                }))
             ) {
                 throw new GrpcItemNotFoundException('TENANT_ID_NOT_FOUND');
             }
