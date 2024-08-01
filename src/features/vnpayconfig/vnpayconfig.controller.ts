@@ -1,8 +1,17 @@
 import { Controller } from '@nestjs/common';
-import { GrpcMethod, MessagePattern, Payload } from '@nestjs/microservices'; 
-import {VNPayConfigService} from './vnpayconfig.service';
-import {ICreateVNPayConfigRequest, ICreateVNPayConfigResponse, IDeleteVNPayConfigRequest, IDeleteVNPayConfigResponse, IGetVNPayConfigByTenantIdRequest, IGetVNPayConfigByTenantIdResponse, IUpdateVNPayConfigRequest, IUpdateVNPayConfigResponse, IVNPayConfigResponse} from './interface/vnpayconfig.interface';
- 
+import { GrpcMethod, MessagePattern, Payload } from '@nestjs/microservices';
+import { VNPayConfigService } from './vnpayconfig.service';
+import {
+    ICreateVNPayConfigRequest,
+    ICreateVNPayConfigResponse,
+    IDeleteVNPayConfigRequest,
+    IDeleteVNPayConfigResponse,
+    IGetVNPayConfigByDomainRequest,
+    IGetVNPayConfigByTenantIdResponse,
+    IUpdateVNPayConfigRequest,
+    IUpdateVNPayConfigResponse,
+    IVNPayConfigResponse,
+} from './interface/vnpayconfig.interface';
 
 @Controller()
 export class VNPayConfigController {
@@ -14,7 +23,9 @@ export class VNPayConfigController {
     }
 
     @GrpcMethod('VNPayConfigService', 'GetVNPayConfigByTenantId')
-    async findByTenantId(data: IGetVNPayConfigByTenantIdRequest): Promise<IGetVNPayConfigByTenantIdResponse> {
+    async findByTenantId(
+        data: IGetVNPayConfigByDomainRequest,
+    ): Promise<IGetVNPayConfigByTenantIdResponse> {
         return await this.VNPayConfigService.getVNPayConfigByTenantId(data);
     }
 

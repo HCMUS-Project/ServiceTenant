@@ -6,7 +6,7 @@ package vnpayConfig;
 
 service VNPayConfigService {
     rpc CreateVNPayConfig(CreateVNPayConfigRequest) returns (VNPayConfigResponse);
-    rpc GetVNPayConfigByTenantId(GetVNPayConfigByTenantIdRequest) returns (VNPayConfigResponse);
+    rpc GetVNPayConfigByTenantId(GetVNPayConfigByDomainRequest) returns (VNPayConfigResponse);
     rpc UpdateVNPayConfig(UpdateVNPayConfigRequest) returns (VNPayConfigResponse);
     rpc DeleteVNPayConfig(DeleteVNPayConfigRequest) returns (VNPayConfigResponse);
 }
@@ -27,8 +27,8 @@ message CreateVNPayConfigRequest {
     string vnpay_host = 5;
 }
 
-message GetVNPayConfigByTenantIdRequest {
-    string tenant_id = 1;
+message GetVNPayConfigByDomainRequest {
+    string domain = 1;
 }
 
 message UpdateVNPayConfigRequest {

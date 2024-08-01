@@ -1,7 +1,7 @@
 import {
     CreateVNPayConfigRequest,
     DeleteVNPayConfigRequest,
-    GetVNPayConfigByTenantIdRequest,
+    GetVNPayConfigByDomainRequest,
     UpdateVNPayConfigRequest,
     VNPayConfig,
     VNPayConfigResponse,
@@ -14,8 +14,7 @@ export interface IVNPayConfigResponse extends VNPayConfigResponse.AsObject {}
 export interface ICreateVNPayConfigRequest extends CreateVNPayConfigRequest.AsObject {}
 export interface ICreateVNPayConfigResponse extends IVNPayConfigResponse {}
 
-export interface IGetVNPayConfigByTenantIdRequest
-    extends GetVNPayConfigByTenantIdRequest.AsObject {}
+export interface IGetVNPayConfigByDomainRequest extends GetVNPayConfigByDomainRequest.AsObject {}
 export interface IGetVNPayConfigByTenantIdResponse extends IVNPayConfigResponse {}
 
 export interface IUpdateVNPayConfigRequest extends UpdateVNPayConfigRequest.AsObject {}
