@@ -12,7 +12,7 @@ import {
     ITenant,
     ITenantResponse,
     IFindTenantByDomainRequest,
-    IFindTenantByDomainResponse,    
+    IFindTenantByDomainResponse,
 } from './interface/tenant.interface';
 
 import { getEnumKeyByEnumValue } from 'src/util/convert_enum/get_key_enum';
@@ -51,6 +51,16 @@ export class TenantService {
                 },
             });
 
+            // create vnpayconfig
+            const newVNPayConfig = await this.prismaService.vNPayConfig.create({
+                data: {
+                    tenant_id: newTenant.id,
+                    vnpay_host: 'https://sandbox.vnpayment.vn',
+                    tmn_code: 'default terminal code',
+                    secure_secret: 'default secure secret',
+                },
+            });
+
             return {
                 tenant: {
                     id: newTenant.id,
@@ -61,7 +71,7 @@ export class TenantService {
                     updatedAt: newTenant.updatedAt.toISOString(),
                     domain: newTenant.domain,
                 },
-            } ;
+            };
         } catch (error) {
             throw error;
         }
@@ -72,7 +82,7 @@ export class TenantService {
         try {
             // find Tenant by id and domain
             const Tenant = await this.prismaService.tenant.findUnique({
-                where: { id: id},
+                where: { id: id },
             });
 
             // check if Tenant not exists
@@ -97,7 +107,9 @@ export class TenantService {
         }
     }
 
-    async findTenantByDomain(data: IFindTenantByDomainRequest): Promise<IFindTenantByDomainResponse> {
+    async findTenantByDomain(
+        data: IFindTenantByDomainRequest,
+    ): Promise<IFindTenantByDomainResponse> {
         const { user } = data;
         try {
             // find Tenant by id and domain
@@ -106,22 +118,24 @@ export class TenantService {
             });
 
             // check if Tenant not exists
-            if (!Tenant) {
-                throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
-            }
+            // if (!Tenant) {
+            //     throw new GrpcItemNotFoundException('TENANT_NOT_FOUND');
+            // }
 
-            return {
-                tenant: {
-                    id: Tenant.id,
-                    ownerId: Tenant.owner_id,
-                    name: Tenant.name,
-                    isLocked: Tenant.is_locked,
-                    createdAt: Tenant.createdAt.toISOString(),
-                    updatedAt: Tenant.updatedAt.toISOString(),
-                    domain: Tenant.domain,
-                },
-                // expireAt: newTenant.expire_at
-            } as ITenantResponse;
+            return Tenant
+                ? ({
+                      tenant: {
+                          id: Tenant.id,
+                          ownerId: Tenant.owner_id,
+                          name: Tenant.name,
+                          isLocked: Tenant.is_locked,
+                          createdAt: Tenant.createdAt.toISOString(),
+                          updatedAt: Tenant.updatedAt.toISOString(),
+                          domain: Tenant.domain,
+                      },
+                      // expireAt: newTenant.expire_at
+                  } as ITenantResponse)
+                : { tenant: undefined };
         } catch (error) {
             throw error;
         }
